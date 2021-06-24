@@ -15,7 +15,7 @@
 
 #pragma mark XGAServer
 
-NSString*const kXGAServiceName = @"io.branch.XcodeGitHub";
+NSString*const kXGAServiceName = @"com.danielkbx.XcodeGitHub";
 
 NSString*_Nonnull XGACleanString(NSString*_Nullable string) {
     if (string == nil) return @"";

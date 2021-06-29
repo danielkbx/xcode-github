@@ -319,8 +319,8 @@ exit:
 
     NSMutableDictionary *dictionary = [NSMutableDictionary new];
     dictionary[@"state"] = [self.class stringFromStatus:status];
-    dictionary[@"context"] = @"continuous-integration/xcode-github";
-    if (statusURL) dictionary[@"target_url"] = statusURL;
+    dictionary[@"context"] = @"Pull Request Bot";
+    if (statusURL) dictionary[@"target_url"] = statusURL.absoluteString;
     if (message.length) dictionary[@"description"] = message;
 
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);

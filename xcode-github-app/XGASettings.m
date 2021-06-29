@@ -97,7 +97,6 @@ NSString*_Nonnull XGACleanString(NSString*_Nullable string) {
     if (!self) return self;
     self.dryRun = NO;
     self.showDebugMessages = NO;
-    self.refreshSeconds = 60.0;
     return self;
 }
 
@@ -197,15 +196,12 @@ NSString*_Nonnull XGACleanString(NSString*_Nullable string) {
 - (void) clear {
     self.dryRun = NO;
     self.showDebugMessages = NO;
-    self.refreshSeconds = 60.0;
     self.gitHubToken = @"";
     [self.servers removeAllObjects];
     [self.gitHubSyncTasks removeAllObjects];
 }
 
-- (void) validate {
-    self.refreshSeconds = MAX(15.0, MIN(self.refreshSeconds, 60.0*60.0*24.0*1.0));
-
+- (void) validate {    
     // Assure that servers are unique:
     NSMutableDictionary*d = NSMutableDictionary.new;
     for (XGAServer*server in self.servers.objectEnumerator) {

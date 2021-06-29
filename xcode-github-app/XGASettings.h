@@ -24,6 +24,7 @@ FOUNDATION_EXPORT NSString*_Nonnull XGACleanString(NSString*_Nullable string);
 @interface XGAGitHubSyncTask : BNCCoding <NSSecureCoding>
 @property (copy) NSString*xcodeServer;
 @property (copy) NSString*botNameForTemplate;
+@property (assign) BOOL temporaryDisabled;
 @end
 
 #pragma mark - XGASettings
@@ -35,7 +36,6 @@ FOUNDATION_EXPORT NSString*_Nonnull XGACleanString(NSString*_Nullable string);
 + (XGASettings*) shared;
 @property (assign) BOOL dryRun;
 @property (assign) BOOL showDebugMessages;
-@property (assign) NSTimeInterval refreshSeconds;
 @property (copy)   NSString*gitHubToken;
 @property (strong, null_resettable) NSMutableDictionary<NSString*, XGAServer*>*servers;
 @property (strong, null_resettable) NSMutableArray<XGAGitHubSyncTask*>*gitHubSyncTasks;

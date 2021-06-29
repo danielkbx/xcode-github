@@ -90,6 +90,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (instancetype) new NS_UNAVAILABLE;
 - (instancetype) init NS_UNAVAILABLE;
+
+- (nullable NSURL *)openInXcodeURLWithHostname:(NSString *)hostname;
+
 @end
 
 #pragma mark - XGXcodeBot

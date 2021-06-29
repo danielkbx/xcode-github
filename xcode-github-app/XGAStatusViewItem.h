@@ -33,6 +33,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (strong, readonly) XGXcodeBotStatus*_Nullable botStatus;
 @property (assign, readonly) BOOL hasGitHubRepo;
 @property (assign, readonly) BOOL isXGAMonitored;
+
+- (nullable NSURL *)openInXcodeURLWithHostname:(NSString *)hostname;
+
 @end
+
 
 NS_ASSUME_NONNULL_END

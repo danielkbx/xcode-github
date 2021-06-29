@@ -27,6 +27,8 @@
 		4DDAA544216AC1DA002F3F8E /* BNCNetworkService.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DDAA542216AC1DA002F3F8E /* BNCNetworkService.m */; };
 		4DDAA551216AD102002F3F8E /* XcodeGitHub.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DDAA54A216ACBD8002F3F8E /* XcodeGitHub.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4DF8729E219C906D00EDCB98 /* XcodeGitHub.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DF8729D219C906D00EDCB98 /* XcodeGitHub.m */; };
+		6516423A268B622800C8A46F /* XcodeBotTestResults.h in Headers */ = {isa = PBXBuildFile; fileRef = 65164238268B622800C8A46F /* XcodeBotTestResults.h */; };
+		6516423B268B622800C8A46F /* XcodeBotTestResults.m in Sources */ = {isa = PBXBuildFile; fileRef = 65164239268B622800C8A46F /* XcodeBotTestResults.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -54,6 +56,8 @@
 		4DDAA558216ADB83002F3F8E /* make-static-lib.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "make-static-lib.sh"; sourceTree = "<group>"; };
 		4DF8729C219C8F6E00EDCB98 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4DF8729D219C906D00EDCB98 /* XcodeGitHub.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XcodeGitHub.m; sourceTree = "<group>"; };
+		65164238268B622800C8A46F /* XcodeBotTestResults.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XcodeBotTestResults.h; sourceTree = "<group>"; };
+		65164239268B622800C8A46F /* XcodeBotTestResults.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XcodeBotTestResults.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -104,6 +108,8 @@
 				4D4CBE2D218980F3007FE904 /* XGUtility.m */,
 				4DDAA4E4216AC08F002F3F8E /* XGXcodeBot.h */,
 				4DDAA4E6216AC08F002F3F8E /* XGXcodeBot.m */,
+				65164238268B622800C8A46F /* XcodeBotTestResults.h */,
+				65164239268B622800C8A46F /* XcodeBotTestResults.m */,
 			);
 			path = XcodeGitHub;
 			sourceTree = "<group>";
@@ -141,6 +147,7 @@
 				4DDAA4F6216AC08F002F3F8E /* XGCommandOptions.h in Headers */,
 				4DDAA4ED216AC08F002F3F8E /* XGGitHubPullRequest.h in Headers */,
 				4DDAA53D216AC0EE002F3F8E /* APFormattedString.h in Headers */,
+				6516423A268B622800C8A46F /* XcodeBotTestResults.h in Headers */,
 				4DDAA551216AD102002F3F8E /* XcodeGitHub.h in Headers */,
 				4DDAA53E216AC0EE002F3F8E /* BNCLog.h in Headers */,
 				4D4CBE2E218980F3007FE904 /* XGUtility.h in Headers */,
@@ -216,6 +223,7 @@
 				4DDAA4F7216AC08F002F3F8E /* XGCommandOptions.m in Sources */,
 				4DDAA4F1216AC08F002F3F8E /* XGXcodeBot.m in Sources */,
 				4DDAA4EE216AC08F002F3F8E /* XGSettings.m in Sources */,
+				6516423B268B622800C8A46F /* XcodeBotTestResults.m in Sources */,
 				4DF8729E219C906D00EDCB98 /* XcodeGitHub.m in Sources */,
 				4D4CBE2F218980F3007FE904 /* XGUtility.m in Sources */,
 			);

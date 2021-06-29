@@ -28,8 +28,6 @@
 @property (assign) BOOL awake;
 
 // Display update
-@property (weak)   IBOutlet NSProgressIndicator *updateProgessIndictor;
-@property (strong) NSDate *lastUpdateDate;
 @property (weak) IBOutlet NSTextField *statusTextField;
 @end
 
@@ -56,6 +54,7 @@
         status.statusImage = [NSImage imageNamed:@"RoundBlue"];
         status.statusSummary = [APFormattedString boldText:@"< Refreshing >"];
         self.arrayController.content = @[ status ];
+        [self updateStatus];
         [self startStatusUpdates];
         self.tableView.delegate = self;
         [self smartSort:self];
@@ -145,7 +144,7 @@
             }
         }
         if (taskToRemove) [tasks removeObject:taskToRemove];
-
+        
     } else {
 
         __auto_type task = [XGAGitHubSyncTask new];
@@ -185,18 +184,9 @@
 }
 
 - (IBAction) showInXcode:(id)sender {
-    XGAStatusViewItem*status = [self selectedTableItem];
-    if (!status) return;
-    NSString*string = nil;
-    if (status.botStatus.integrationID) {
-        string = [NSString stringWithFormat:@"xcbot://%@/botID/%@/integrationID/%@",
-            status.server, status.bot.botID, status.botStatus.integrationID];
-    } else {
-        string = [NSString stringWithFormat:@"xcbot://%@/botID/%@",
-            status.server, status.bot.botID];
-    }
-    NSURL*URL = [NSURL URLWithString:string];
-    [[NSWorkspace sharedWorkspace] openURL:URL];
+    XGAStatusViewItem *status = [self selectedTableItem];
+    NSURL *url = [status openInXcodeURLWithHostname:@"localhost"];
+    [[NSWorkspace sharedWorkspace] openURL:url];
 }
 
 - (IBAction) showInBrowser:(id)sender {
@@ -343,7 +333,7 @@
         dispatch_source_set_event_handler(self.statusTimer, ^ {
             __strong __typeof(weakSelf) strongSelf = weakSelf;
             if (strongSelf)
-                [strongSelf updateStatus];
+                [strongSelf updateStatusIfNeeded];
             else
                 dispatch_source_cancel(localStatusTimer);
         });
@@ -357,41 +347,43 @@
         if (self.statusTimer) {
             dispatch_source_cancel(self.statusTimer);
             self.statusTimer = nil;
-            self.lastUpdateDate = nil;
         }
     }
 }
 
 - (void) updateStatusNow {
     @synchronized (self) {
-        self.lastUpdateDate = nil;
         [self updateStatus];
     }
 }
 
-- (void) updateStatus {
-    NSTimeInterval kStatusRefreshInterval = [XGASettings shared].refreshSeconds;
-    NSTimeInterval elapsed = - [self.lastUpdateDate timeIntervalSinceNow];
-    BNCPerformBlockOnMainThreadAsync(^{
-        self.updateProgessIndictor.doubleValue = elapsed / kStatusRefreshInterval * 100.0;
-    });
-    if (elapsed < kStatusRefreshInterval && self.lastUpdateDate != nil)
+- (void) updateStatusIfNeeded {
+    NSInteger now = (NSInteger)floor([[NSDate now] timeIntervalSince1970]);
+    BOOL doUpdate = now % 10 == 0;
+    
+    if (!doUpdate) {
         return;
+    }
+    
+    [self updateStatus];
+}
 
+- (void) updateStatus {
     // Prevent double status getting:
     @synchronized(self) {
         if (self.statusIsInProgress) return;
         self.statusIsInProgress = YES;
     }
 
-    BNCLogDebug(@"Start updateStatus.");
+    
+    BNCLogDebug(@"Start sync update");
     BNCPerformBlockOnMainThreadAsync(^{ self.statusTextField.stringValue = @""; });
-
+    
     // Create new bots as needed:
     NSArray<XGAGitHubSyncTask*>* syncTasks = XGASettings.shared.gitHubSyncTasks;
     NSDictionary<NSString*, XGServer*>*statusServers = XGASettings.shared.servers;
     for (XGAGitHubSyncTask*task in syncTasks) {
-        if (task.xcodeServer.length != 0 && statusServers[task.xcodeServer] != nil)
+        if (task.xcodeServer.length != 0 && statusServers[task.xcodeServer] != nil && !task.temporaryDisabled)
             [self updateSyncBots:task];
     }
 
@@ -410,11 +402,9 @@
     BNCPerformBlockOnMainThreadAsync(^{
         self.arrayController.content = statusArray;
     });
-    BNCLogDebug(@"End updateStatus.");
-
-    self.lastUpdateDate = [NSDate date];
-    BNCPerformBlockOnMainThreadAsync(^ { self.updateProgessIndictor.doubleValue = 0.0; });
-
+    BNCLogDebug(@"End sync");
+    
+    
     // Release status lock:
     self.statusIsInProgress = NO;
 }
@@ -436,6 +426,10 @@
         options.dryRun = XGASettings.shared.dryRun;
         error = XGUpdateXcodeBotsWithGitHub(options);
         if (error) {
+            if (options.githubAuthToken == nil) {
+                __auto_type tasks = [XGASettings shared].gitHubSyncTasks;
+                [tasks removeObject:syncTask];
+            }
             NSMutableAttributedString*message =
                 [NSAttributedString stringWithStrings:
                     [NSAttributedString stringWithImage:

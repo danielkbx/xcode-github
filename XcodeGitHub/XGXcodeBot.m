@@ -241,11 +241,20 @@ _Test Coverage_: 65% (193 tests).
 }
 
 - (NSURL*) integrationLogURL {
-    NSString*string =
-        [NSString stringWithFormat:@"https://%@/xcode/internal/api/integrations/%@/assets",
-            self.serverName, self.integrationID];
+    NSString*string = [NSString stringWithFormat:@"https://%@/xcode/internal/api/integrations/%@/assets", self.serverName, self.integrationID];
     NSURL*URL = [NSURL URLWithString:string];
     return URL;
+}
+
+- (NSURL *)openInXcodeURLWithHostname:(NSString *)hostname
+{
+    NSString *string = nil;
+    if (self.integrationID) {
+        string = [NSString stringWithFormat:@"xcbot://%@/botID/%@/integrationID/%@", hostname, self.botID, self.integrationID];
+    } else {
+        string = [NSString stringWithFormat:@"xcbot://%@/botID/%@", hostname, self.botID];
+    }
+    return [NSURL URLWithString:string];
 }
 
 @end
@@ -263,21 +272,24 @@ _Test Coverage_: 65% (193 tests).
     _name = _dictionary[@"name"];
     _botID = _dictionary[@"_id"];
     @try {
-        _sourceControlRepository =
-            _dictionary[@"configuration"]
-                [@"sourceControlBlueprint"]
-                [@"DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey"]
-                [0]
-                [@"DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey"];
-        NSDictionary *locations =
-            _dictionary[@"configuration"]
-                [@"sourceControlBlueprint"]
-                [@"DVTSourceControlWorkspaceBlueprintLocationsKey"];
-        _sourceControlWorkspaceBlueprintLocationsID = locations.allKeys.firstObject;
+        NSDictionary *locations = _dictionary[@"configuration"][@"sourceControlBlueprint"][@"DVTSourceControlWorkspaceBlueprintLocationsKey"];
+        NSDictionary *remoteLocations = _dictionary[@"configuration"][@"sourceControlBlueprint"][@"DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey"];
+        _sourceControlWorkspaceBlueprintLocationsID = _dictionary[@"configuration"][@"sourceControlBlueprint"][@"DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey"];
+        if ([_sourceControlWorkspaceBlueprintLocationsID length] > 0) {
+            for (NSDictionary *candidate in remoteLocations) {
+                NSString *locationKey = candidate[@"DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey"];
+                if ([locationKey isEqualTo:_sourceControlWorkspaceBlueprintLocationsID]) {
+                    _sourceControlRepository = candidate[@"DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey"];
+                }
+            }
+        }
+        
+        NSDictionary *location = locations[_sourceControlWorkspaceBlueprintLocationsID];
 
         _templateBotName = _dictionary[@"templateBotName"];
         _pullRequestNumber = _dictionary[@"pullRequestNumber"];
         _pullRequestTitle = _dictionary[@"pullRequestTitle"];
+        _branch = location[@"DVTSourceControlBranchIdentifierKey"];
     }
     @catch(id error) {
         BNCLogError(@"Can't retrieve source control URL: %@", error);
@@ -301,11 +313,6 @@ _Test Coverage_: 65% (193 tests).
                 )];
             if ([_repoName hasSuffix:@".git"]) {
                 _repoName = [_repoName substringWithRange:NSMakeRange(0, _repoName.length-4)];
-            }
-            NSDictionary*locations =
-                _dictionary[@"configuration"][@"sourceControlBlueprint"][@"DVTSourceControlWorkspaceBlueprintLocationsKey"];
-            for (NSDictionary*location in locations.objectEnumerator) {
-                _branch = location[@"DVTSourceControlBranchIdentifierKey"];
             }
         }
     }
@@ -403,6 +410,7 @@ exit:
     return (self.templateBotName.length == 0) ? NO : YES;
 }
 
+
 - (XGXcodeBotStatus*_Nonnull) status {
     NSError *localError = nil;
     XGXcodeBotStatus *status = nil;
@@ -419,8 +427,10 @@ exit:
                 getOperationWithURL:statusURL completion:^(BNCNetworkOperation *operation) {
                 dispatch_semaphore_signal(semaphore);
             }];
-        if (self.server.user.length > 0)
+        
+        if (self.server.user.length > 0) {
             [operation setUser:self.server.user password:self.server.password];
+        }
         [operation start];
         dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
 
@@ -428,6 +438,7 @@ exit:
             localError = operation.error;
             goto exit;
         }
+        
         [operation deserializeJSONResponseData];
         if (operation.error) {
             localError = operation.error;
@@ -438,8 +449,9 @@ exit:
             ? (NSDictionary*) operation.responseData : nil;
         NSArray *a = response[@"results"];
         if ([a isKindOfClass:NSArray.class]) {
-            if (a.count >= 1)
-                status = [[XGXcodeBotStatus alloc] initWithServerName:self.server.server dictionary:a[0]];
+            if (a.count >= 1) {
+                status = [[XGXcodeBotStatus alloc] initWithServerName:self.server.server dictionary:a[0]];                
+            }
             else {
                 status = [[XGXcodeBotStatus alloc] initWithServerName:self.server.server dictionary:nil];
                 status.botID = self.botID;
@@ -452,10 +464,7 @@ exit:
             goto exit;
         }
 
-        localError =
-            [NSError errorWithDomain:NSNetServicesErrorDomain
-                code:NSURLErrorBadServerResponse
-                userInfo:@{ NSLocalizedDescriptionKey: @"Expected an array." }];
+        localError = [NSError errorWithDomain:NSNetServicesErrorDomain code:NSURLErrorBadServerResponse userInfo:@{ NSLocalizedDescriptionKey: @"Expected an array." }];
     }
 
 exit:

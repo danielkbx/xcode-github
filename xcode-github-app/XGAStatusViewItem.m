@@ -83,4 +83,15 @@
     return status;
 }
 
+- (NSURL *)openInXcodeURLWithHostname:(NSString *)hostname
+{
+    NSString *string = nil;
+    if (self.botStatus.integrationID) {
+        string = [NSString stringWithFormat:@"xcbot://%@/botID/%@/integrationID/%@", hostname, self.bot.botID, self.botStatus.integrationID];
+    } else {
+        string = [NSString stringWithFormat:@"xcbot://%@/botID/%@", hostname, self.bot.botID];
+    }
+    return [NSURL URLWithString:string];
+}
+
 @end

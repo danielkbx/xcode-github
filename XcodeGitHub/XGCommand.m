@@ -15,6 +15,7 @@
 #import "BNCLog.h"
 #import "BNCNetworkService.h"
 #include <sysexits.h>
+#import "XcodeBotTestResults.h"
 
 #pragma mark Bot Functions
 
@@ -72,11 +73,8 @@ NSError*_Nullable XGDeleteBotWithOptions(
     return error;
 }
 
-NSError*_Nullable XGUpdatePRStatusOnGitHub(
-        XGCommandOptions*_Nonnull options,
-        XGGitHubPullRequest*_Nonnull pr,
-        XGXcodeBotStatus*_Nonnull botStatus
-    ) {
+NSError*_Nullable XGUpdatePRStatusOnGitHub(XGCommandOptions*_Nonnull options, XGGitHubPullRequest*_Nonnull pr, XGXcodeBotStatus*_Nonnull botStatus)
+{
     NSError*error = nil;
     XGPullRequestStatus status = XGPullRequestStatusError;
 
@@ -91,7 +89,6 @@ NSError*_Nullable XGUpdatePRStatusOnGitHub(
 
     NSSet<NSString*>*failureResults = [NSSet setWithArray:@[
         @"build-errors",
-        @"test-failures",
         @"build-failed",
         @"canceled",
     ]];
@@ -101,23 +98,37 @@ NSError*_Nullable XGUpdatePRStatusOnGitHub(
         @"analyzer-warnings",
     ]];
 
+    NSURL *statusUrl = nil;
+    NSString *message = nil;
+    
     if ([botStatus.currentStep isEqualToString:@"completed"]) {
         if (botStatus.result == nil) {
-        } else
+            return nil;
+        }
+        
         if ([successResults containsObject:botStatus.result]) {
             status = XGPullRequestStatusSuccess;
-        } else
-        if ([failureResults containsObject:botStatus.result]) {
+        } else if ([failureResults containsObject:botStatus.result]) {
             status = XGPullRequestStatusFailure;
+            statusUrl = [botStatus integrationLogURL];
+        } else if ([botStatus.result isEqualToString: @"test-failures"]) {
+            XcodeBotTestResults *testResults = [[XcodeBotTestResults alloc] initWithServerName:botStatus.serverName integrationID:botStatus.integrationID];
+            if ([testResults fetchResults] > 0) {
+                message = testResults.digest;
+            }
         } else {
             status = XGPullRequestStatusError;
         }
+        
     } else {
         status = XGPullRequestStatusPending;
     }
 
-    NSString*message = botStatus.summaryString;
-    NSString*statusHash = [NSString stringWithFormat:@"%@:%@",
+    if ([message length] == 0) {
+        message = botStatus.summaryString;
+    }
+    
+    NSString *statusHash = [NSString stringWithFormat:@"%@:%@",
         NSStringFromXGPullRequestStatus(status), message];
 
     NSString*lastStatusHash =
@@ -149,10 +160,10 @@ NSError*_Nullable XGUpdatePRStatusOnGitHub(
         return nil;
     }
 
-    error = [pr setStatus:status
-        message:message
-        statusURL:nil];
-    if (error) return error;
+    error = [pr setStatus:status message:message statusURL:statusUrl];
+    if (error) {
+        return error;
+    }
 
     // Add a completion message to the PR:
     if ([botStatus.currentStep isEqualToString:@"completed"]) {
@@ -203,7 +214,8 @@ NSError* XGShowXcodeBotStatus(XGCommandOptions* options) {
 
 #pragma mark - Main Function
 
-NSError*_Nullable XGUpdateXcodeBotsWithGitHub(XGCommandOptions*_Nonnull options) {
+NSError*_Nullable XGUpdateXcodeBotsWithGitHub(XGCommandOptions*_Nonnull options)
+{
     NSError *error = nil;
     int returnCode = EXIT_FAILURE;
     {
@@ -219,8 +231,7 @@ NSError*_Nullable XGUpdateXcodeBotsWithGitHub(XGCommandOptions*_Nonnull options)
         NSDictionary<NSString*, XGXcodeBot*> *bots =
             [XGXcodeBot botsForServer:xcodeServer error:&error];
         if (error) {
-            BNCLogError(@"Can't retrieve Xcode bot information from %@: %@.",
-                options.xcodeServerName, error);
+            BNCLogError(@"Can't retrieve Xcode bot information from %@: %@.", options.xcodeServerName, error);
             returnCode = EX_NOHOST;
             goto exit;
         }
@@ -255,6 +266,7 @@ NSError*_Nullable XGUpdateXcodeBotsWithGitHub(XGCommandOptions*_Nonnull options)
         for (XGGitHubPullRequest *pr in pullRequests.objectEnumerator) {
             NSString *newBotName = [XGXcodeBot botNameFromPRNumber:pr.number title:pr.title];
             XGXcodeBot *bot = bots[newBotName];
+            
             if ([pr.state isEqualToString:@"open"]) {
                 if (bot) {
                     error = XGUpdatePRStatusOnGitHub(options, pr, bot.status);

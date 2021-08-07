@@ -10,15 +10,16 @@
 */
 
 #import <Foundation/Foundation.h>
+#import "XGXcodeBot.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface XcodeBotTestResults : NSObject
 
-@property (nonatomic, readonly) NSString *serverName;
+@property (nonatomic, readonly) XGXcodeBot *bot;
 @property (nonatomic, readonly) NSString *integrationID;
 
-- (instancetype)initWithServerName:(NSString *)serverName integrationID:(NSString *)integrationID;
+- (instancetype)initWithBot:(XGXcodeBot *)bot integrationID:(NSString *)integrationID;
 
 - (NSUInteger)fetchResults;
 

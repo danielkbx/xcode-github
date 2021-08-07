@@ -15,6 +15,7 @@
 #import "XGAStatusViewItem.h"
 #import "BNCThreads.h"
 #import "NSAttributedString+App.h"
+#include <sysexits.h>
 
 #pragma mark XGAStatusViewController
 
@@ -358,6 +359,7 @@
 }
 
 - (void) updateStatusIfNeeded {
+            
     NSInteger now = (NSInteger)floor([[NSDate now] timeIntervalSince1970]);
     BOOL doUpdate = now % 10 == 0;
     
@@ -426,7 +428,8 @@
         options.dryRun = XGASettings.shared.dryRun;
         error = XGUpdateXcodeBotsWithGitHub(options);
         if (error) {
-            if (options.githubAuthToken == nil) {
+            NSNumber *returnCode = (NSNumber *)error.userInfo[@"return_code"];
+            if (options.githubAuthToken == nil || returnCode.intValue == EX_CONFIG) {
                 __auto_type tasks = [XGASettings shared].gitHubSyncTasks;
                 [tasks removeObject:syncTask];
             }

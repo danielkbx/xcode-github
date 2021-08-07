@@ -10,23 +10,27 @@
 */
 
 #import "XcodeBotTestResults.h"
+#import "BNCLog.h"
+#import "BNCNetworkService.h"
+#import <XcodeGitHub-Swift.h>
 
 @interface XcodeBotTestResults ()
 
-@property (nonatomic, readwrite, copy) NSString *serverName;
+@property (nonatomic, readwrite, retain) XGXcodeBot *bot;
 @property (nonatomic, readwrite, copy) NSString *integrationID;
 
+@property (nonatomic, readwrite, retain) NSArray <XcodeBotTestResult *> *tests;
 
 @end
 
 @implementation XcodeBotTestResults
 
-- (instancetype)initWithServerName:(NSString *)serverName integrationID:(NSString *)integrationID
+- (instancetype)initWithBot:(XGXcodeBot *)bot integrationID:(NSString *)integrationID
 {
     self = [super init];
     if (self) {
-        self.serverName = serverName;
-        self.integrationID= integrationID;
+        self.bot = bot;
+        self.integrationID= integrationID;        
     }
     return self;
 }

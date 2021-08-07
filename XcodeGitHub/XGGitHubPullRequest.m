@@ -133,14 +133,11 @@ NSString*_Nonnull NSStringFromXGPullRequestStatus(XGPullRequestStatus status) {
         }
 
         NSString *serverURLString =
-            [NSString stringWithFormat:
-                @"https://api.github.com/repos/%@/pulls?state=open&sort=created&direction=desc",
-                    repo];
+            [NSString stringWithFormat: @"https://api.github.com/repos/%@/pulls?state=open&sort=created&direction=desc", repo];
 
         NSURL *serverURL = [NSURL URLWithString:serverURLString];
         if (!serverURL) {
-            localError =
-                [NSError errorWithDomain:NSNetServicesErrorDomain code:NSURLErrorBadURL userInfo:@{
+            localError = [NSError errorWithDomain:NSNetServicesErrorDomain code:NSURLErrorBadURL userInfo:@{
                     NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Bad URL '%@'.", serverURL]
                 }];
             BNCLogError(@"Bad URL '%@'.", serverURL);
@@ -300,9 +297,7 @@ exit:
     return results;
 }
 
-- (NSError*_Nullable) setStatus:(XGPullRequestStatus)status
-                        message:(NSString*)message
-                      statusURL:(NSURL*)statusURL {
+- (NSError*_Nullable) setStatus:(XGPullRequestStatus)status message:(NSString*)message statusURL:(NSURL*)statusURL {
     NSError *error = nil;
     NSString* string = [NSString stringWithFormat:
         @"https://api.github.com/repos/%@/%@/statuses/%@",

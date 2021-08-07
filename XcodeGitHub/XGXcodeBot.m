@@ -13,6 +13,7 @@
 #import "BNCLog.h"
 #import "BNCNetworkService.h"
 #import "APFormattedString.h"
+#import <XcodeGitHub-Swift.h>
 
 @implementation XGServer
 
@@ -103,9 +104,18 @@
 - (NSString*) summaryString {
     NSString *summary = nil;
     if ([self.currentStep isEqualToString:@"completed"]) {
-        summary = self.result;
+        if ([self.result isEqualToString:@"warnings"]) {
+            int numberOfWarnings = self.warningCount.intValue;
+            if (numberOfWarnings == 1) {
+                summary = @"1 Warning";
+            } else {
+                summary = [NSString stringWithFormat:@"%i Warnings", numberOfWarnings];
+            }
+        } else {
+            summary = self.result;
+        }
     } else
-    if (self.currentStep.length) {
+    if (self.currentStep.length > 0) {
         summary = self.currentStep;
     } else {
         summary = @"unknown";
@@ -132,16 +142,21 @@ _Result_: **Perfect build**! 👍
 _Test Coverage_: 65% (193 tests).
 */
 
-- (APFormattedString*) formattedDetailString {
+
+- (APFormattedString *)formattedDetailString
+{
+    return [self formattedDetailStringWithFailedTest:nil];
+}
+
+- (APFormattedString *)formattedDetailStringWithFailedTest:(NSArray <XcodeBotTestResult *> * _Nullable)failedTests {
     NSTimeInterval duration = [self.endedDate timeIntervalSinceDate:self.startedDate];
     NSString*durationString = XGDurationStringFromTimeInterval(duration);
 
     APFormattedString *apstring =
-        [[[[APFormattedString
-            plainText:@"Result of Integration %@", self.integrationNumber]
-            line]
-            italicText:@"Duration"]
-            plainText:@": %@\n", durationString];
+    [[APFormattedString plainText:@"Result of Integration %@", self.integrationNumber] line];
+          
+    [[apstring italicText:@"Server: "] plainText:@"%@\n", self.serverName];
+    [[apstring italicText:@"Duration: "] plainText:@"%@\n", durationString];
 
     if ([self.result isEqualToString:@"canceled"]) {
         [[[apstring
@@ -151,18 +166,22 @@ _Test Coverage_: 65% (193 tests).
         return apstring;
     }
     
-    [[apstring
-        italicText:@"Result"]
-        plainText:@": "];
+    [apstring italicText:@"Result: "];
 
     if ([self.errorCount integerValue] > 0) {
         [apstring boldText:@"%@ errors, failing state: %@", self.errorCount, self.summaryString];
         return apstring;
     }
 
-    if ([self.testFailureCount integerValue] > 0) {
+    if ([self.testFailureCount integerValue] > 0) {        
         [[apstring boldText:@"Build failed %@ tests", self.testFailureCount]
-            plainText:@" out of %@", self.testsCount];
+                            plainText:@" out of %@", self.testsCount];
+        if (failedTests.count > 0) {
+            [apstring italicText:@"\nFailed tests:\n"];
+        }
+        for (XcodeBotTestResult *test in failedTests) {
+            [apstring plainText:@"- %@\n", test.name];
+        }
         return apstring;
     }
 
@@ -261,7 +280,19 @@ _Test Coverage_: 65% (193 tests).
 
 #pragma mark - XGXcodeBot
 
+@interface XGXcodeBot ()
+
+@end
+
+static NSMutableDictionary <NSString *, NSMutableDictionary<NSString *, NSArray <XcodeBotTestResult *> *> *> *failedTestsForIntegrationID; // [BotID : [ IntegrationID : [Tests]]]
+
 @implementation XGXcodeBot
+
++ (void)initialize
+{
+    [super initialize];
+    failedTestsForIntegrationID = [NSMutableDictionary new];
+}
 
 - (instancetype) initWithServer:(XGServer*)server dictionary:(NSDictionary *)dictionary {
     self = [super init];
@@ -333,8 +364,7 @@ _Test Coverage_: 65% (193 tests).
     return newTitle;
 }
 
-+ (NSDictionary<NSString*, XGXcodeBot*>*_Nullable) botsForServer:(XGServer*)xcodeServer
-        error:(NSError*__autoreleasing _Nullable*_Nullable)error {
++ (NSDictionary<NSString*, XGXcodeBot*>*_Nullable) botsForServer:(XGServer*)xcodeServer error:(NSError*__autoreleasing _Nullable*_Nullable)error {
 
     NSError *localError = nil;
     NSMutableDictionary<NSString*, XGXcodeBot*>* bots = nil;
@@ -415,18 +445,13 @@ exit:
     NSError *localError = nil;
     XGXcodeBotStatus *status = nil;
     {
-        NSString *statusString =
-            [NSString stringWithFormat:
-                @"https://%@:20343/api/bots/%@/integrations?last=1",
-                    self.server.server, self.botID];
+        NSString *statusString = [NSString stringWithFormat: @"https://%@:20343/api/bots/%@/integrations?last=1", self.server.server, self.botID];
         NSURL *statusURL = [NSURL URLWithString:statusString];
 
         dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
-        BNCNetworkOperation *operation =
-            [[BNCNetworkService shared]
-                getOperationWithURL:statusURL completion:^(BNCNetworkOperation *operation) {
-                dispatch_semaphore_signal(semaphore);
-            }];
+        BNCNetworkOperation *operation = [[BNCNetworkService shared] getOperationWithURL:statusURL completion:^(BNCNetworkOperation *operation) {
+            dispatch_semaphore_signal(semaphore);
+        }];
         
         if (self.server.user.length > 0) {
             [operation setUser:self.server.user password:self.server.password];
@@ -447,6 +472,7 @@ exit:
         NSDictionary *response =
             ([operation.responseData isKindOfClass:[NSDictionary class]])
             ? (NSDictionary*) operation.responseData : nil;
+        
         NSArray *a = response[@"results"];
         if ([a isKindOfClass:NSArray.class]) {
             if (a.count >= 1) {
@@ -474,30 +500,24 @@ exit:
 }
 
 - (NSError*_Nullable) deleteBot {
+    
+    [failedTestsForIntegrationID removeObjectForKey:self.botID];
+    
     NSError *localError = nil;
-    NSString *string = [NSString stringWithFormat:
-        @"https://%@:20343/api/bots/%@", self.server.server, self.botID];
+    NSString *string = [NSString stringWithFormat: @"https://%@:20343/api/bots/%@", self.server.server, self.botID];
     NSURL *URL = [NSURL URLWithString:string];
     if (!URL) {
-        localError =
-            [NSError errorWithDomain:NSNetServicesErrorDomain
-                code:NSURLErrorBadURL
-                userInfo:@{
-                    NSLocalizedDescriptionKey:
-                        [NSString stringWithFormat:@"Bad server name '%@'.", self.server.server]
-                }
-            ];
+        localError = [NSError errorWithDomain:NSNetServicesErrorDomain code:NSURLErrorBadURL userInfo:@{
+            NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Bad server name '%@'.", self.server.server]
+        }];
         BNCLogError(@"Bad server name '%@'.", self.server.server);
         return localError;
     }
 
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
-    BNCNetworkOperation *operation =
-        [[BNCNetworkService shared]
-            getOperationWithURL:URL
-            completion:^(BNCNetworkOperation *operation) {
-                dispatch_semaphore_signal(semaphore);
-        }];
+    BNCNetworkOperation *operation = [[BNCNetworkService shared] getOperationWithURL:URL completion:^(BNCNetworkOperation *operation) {
+        dispatch_semaphore_signal(semaphore);
+    }];
     operation.request.HTTPMethod = @"DELETE";
     if (self.server.user.length > 0)
         [operation setUser:self.server.user password:self.server.password];
@@ -821,6 +841,50 @@ exit:
     }
 
     return nil;
+}
+
+- (NSArray <XcodeBotTestResult *> *)failedTestOfIntegration:(NSString *)integrationID
+{
+    NSArray *tests = failedTestsForIntegrationID[self.botID][integrationID];
+    if (tests) {
+        return tests;
+    }
+    
+    BNCLogDebug(@"Getting test results");
+    NSString *resultsURLString = [NSString stringWithFormat: @"https://%@:20343/api/integrations/%@/test/batch", self.server.server, integrationID];
+    NSURL *resultsURLS = [NSURL URLWithString:resultsURLString];
+
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+    BNCNetworkOperation *operation = [[BNCNetworkService shared] postOperationWithURL:resultsURLS JSONData:nil completion:^(BNCNetworkOperation * _Nonnull operation) {
+        dispatch_semaphore_signal(semaphore);
+    }];
+    
+    if (self.server.user.length > 0) {
+        [operation setUser:self.server.user password:self.server.password];
+    }
+    [operation start];
+    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+
+    if (operation.error) {
+        BNCLogError(@"Failed to get test results: %@", operation.error.localizedDescription);
+        return 0;
+    }
+    
+    if ([operation.responseData isKindOfClass:[NSData class]]) {
+        NSData *data = (NSData *)operation.responseData;
+        tests = [XcodeBotTestResult resultsFromData:data onlyFailed: YES];
+    }
+    BNCLogDebug(@"Got %lui failed tests", (unsigned long)tests.count);
+    
+    NSMutableDictionary *perBotDictionary = failedTestsForIntegrationID[self.botID];
+    if (!perBotDictionary) {
+        perBotDictionary = [NSMutableDictionary new];
+        failedTestsForIntegrationID[self.botID] = perBotDictionary;
+    }
+        
+    perBotDictionary[integrationID] = tests;
+           
+    return tests;
 }
 
 @end

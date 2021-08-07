@@ -32,6 +32,7 @@
 		4DF0F5972090474D0015D1F7 /* XGASettings.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DF0F5962090474D0015D1F7 /* XGASettings.m */; };
 		4DF656312153620100380FD0 /* BNCEncoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DF6562F2153620100380FD0 /* BNCEncoder.m */; };
 		4DFB5308215DCD6700DB1209 /* XGANetworkServiceBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DFB5307215DCD6700DB1209 /* XGANetworkServiceBrowser.m */; };
+		6504D52E268C43A30025BE33 /* Void.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6504D52D268C43A30025BE33 /* Void.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -98,6 +99,8 @@
 		4DF656302153620100380FD0 /* BNCEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCEncoder.h; sourceTree = "<group>"; };
 		4DFB5306215DCD6700DB1209 /* XGANetworkServiceBrowser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XGANetworkServiceBrowser.h; sourceTree = "<group>"; };
 		4DFB5307215DCD6700DB1209 /* XGANetworkServiceBrowser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XGANetworkServiceBrowser.m; sourceTree = "<group>"; };
+		6504D528268C427B0025BE33 /* xcode-github-app-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "xcode-github-app-Bridging-Header.h"; sourceTree = "<group>"; };
+		6504D52D268C43A30025BE33 /* Void.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Void.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -168,6 +171,8 @@
 				4D8352C520A3F30A00184259 /* XGAStatusViewController.xib */,
 				4DEE32E22162EB20006BD06C /* XGAStatusViewItem.h */,
 				4DEE32E32162EB20006BD06C /* XGAStatusViewItem.m */,
+				6504D528268C427B0025BE33 /* xcode-github-app-Bridging-Header.h */,
+				6504D52D268C43A30025BE33 /* Void.swift */,
 			);
 			path = "xcode-github-app";
 			sourceTree = "<group>";
@@ -246,6 +251,7 @@
 				TargetAttributes = {
 					4D7661672057565200216B72 = {
 						CreatedOnToolsVersion = 9.2;
+						LastSwiftMigration = 1250;
 						ProvisioningStyle = Manual;
 						SystemCapabilities = {
 							com.apple.HardenedRuntime = {
@@ -329,6 +335,7 @@
 				4D7661782057565300216B72 /* main.m in Sources */,
 				4D65363621504842000812E1 /* XGAStatusPopover.m in Sources */,
 				4D76616D2057565200216B72 /* XGAAppDelegate.m in Sources */,
+				6504D52E268C43A30025BE33 /* Void.swift in Sources */,
 				4DF0F5972090474D0015D1F7 /* XGASettings.m in Sources */,
 				4DF656312153620100380FD0 /* BNCEncoder.m in Sources */,
 			);
@@ -479,6 +486,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "xcode-github-app/xcode-github-app.entitlements";
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Manual;
@@ -487,10 +495,15 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/xcode-github-app/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = "$(SDKROOT)/usr/lib/swift";
 				MACOSX_DEPLOYMENT_TARGET = 11.3;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.danielkbx.xcode-github-app";
+				PRODUCT_MODULE_NAME = XcodeGitHubApp;
 				PRODUCT_NAME = XcodeGitHub;
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "xcode-github-app/xcode-github-app-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -498,6 +511,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "xcode-github-app/xcode-github-app.entitlements";
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Manual;
@@ -506,10 +520,14 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/xcode-github-app/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = "$(SDKROOT)/usr/lib/swift";
 				MACOSX_DEPLOYMENT_TARGET = 11.3;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.danielkbx.xcode-github-app";
+				PRODUCT_MODULE_NAME = XcodeGitHubApp;
 				PRODUCT_NAME = XcodeGitHub;
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "xcode-github-app/xcode-github-app-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};

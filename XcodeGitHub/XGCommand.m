@@ -16,6 +16,7 @@
 #import "BNCNetworkService.h"
 #include <sysexits.h>
 #import "XcodeBotTestResults.h"
+#import <XcodeGitHub-Swift.h>
 
 #pragma mark Bot Functions
 
@@ -73,7 +74,7 @@ NSError*_Nullable XGDeleteBotWithOptions(
     return error;
 }
 
-NSError*_Nullable XGUpdatePRStatusOnGitHub(XGCommandOptions*_Nonnull options, XGGitHubPullRequest*_Nonnull pr, XGXcodeBotStatus*_Nonnull botStatus)
+NSError*_Nullable XGUpdatePRStatusOnGitHub(XGCommandOptions*_Nonnull options, XGGitHubPullRequest*_Nonnull pr, XGXcodeBotStatus*_Nonnull botStatus, XGXcodeBot *bot)
 {
     NSError*error = nil;
     XGPullRequestStatus status = XGPullRequestStatusError;
@@ -90,6 +91,7 @@ NSError*_Nullable XGUpdatePRStatusOnGitHub(XGCommandOptions*_Nonnull options, XG
     NSSet<NSString*>*failureResults = [NSSet setWithArray:@[
         @"build-errors",
         @"build-failed",
+        @"test-failures",
         @"canceled",
     ]];
     NSSet<NSString*>*successResults = [NSSet setWithArray:@[
@@ -111,10 +113,10 @@ NSError*_Nullable XGUpdatePRStatusOnGitHub(XGCommandOptions*_Nonnull options, XG
         } else if ([failureResults containsObject:botStatus.result]) {
             status = XGPullRequestStatusFailure;
             statusUrl = [botStatus integrationLogURL];
-        } else if ([botStatus.result isEqualToString: @"test-failures"]) {
-            XcodeBotTestResults *testResults = [[XcodeBotTestResults alloc] initWithServerName:botStatus.serverName integrationID:botStatus.integrationID];
-            if ([testResults fetchResults] > 0) {
-                message = testResults.digest;
+            
+            NSArray *failedTest = [bot failedTestOfIntegration:botStatus.integrationID];
+            if (failedTest.count > 0) {
+                
             }
         } else {
             status = XGPullRequestStatusError;
@@ -167,7 +169,11 @@ NSError*_Nullable XGUpdatePRStatusOnGitHub(XGCommandOptions*_Nonnull options, XG
 
     // Add a completion message to the PR:
     if ([botStatus.currentStep isEqualToString:@"completed"]) {
-        error = [pr addComment:[botStatus.formattedDetailString renderMarkDown]];
+        NSArray <XcodeBotTestResult *> *failedTests = nil;
+        if ([botStatus.result isEqualToString:@"test-failures"]) {
+            failedTests = [bot failedTestOfIntegration:botStatus.integrationID];
+        }
+        error = [pr addComment:[[botStatus formattedDetailStringWithFailedTest:failedTests] renderMarkDown]];
         if (error) return error;
     }
 
@@ -228,8 +234,7 @@ NSError*_Nullable XGUpdateXcodeBotsWithGitHub(XGCommandOptions*_Nonnull options)
         [BNCNetworkService shared].allowAnySSLCert = YES;
 
         BNCLogDebug(@"Getting Xcode bots on '%@'...", options.xcodeServerName);
-        NSDictionary<NSString*, XGXcodeBot*> *bots =
-            [XGXcodeBot botsForServer:xcodeServer error:&error];
+        NSDictionary<NSString*, XGXcodeBot*> *bots = [XGXcodeBot botsForServer:xcodeServer error:&error];
         if (error) {
             BNCLogError(@"Can't retrieve Xcode bot information from %@: %@.", options.xcodeServerName, error);
             returnCode = EX_NOHOST;
@@ -269,7 +274,7 @@ NSError*_Nullable XGUpdateXcodeBotsWithGitHub(XGCommandOptions*_Nonnull options)
             
             if ([pr.state isEqualToString:@"open"]) {
                 if (bot) {
-                    error = XGUpdatePRStatusOnGitHub(options, pr, bot.status);
+                    error = XGUpdatePRStatusOnGitHub(options, pr, bot.status, bot);
                 } else {
                     error = XGCreateBotWithOptions(options, pr, templateBot, newBotName);
                 }

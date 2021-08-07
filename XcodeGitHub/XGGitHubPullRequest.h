@@ -53,9 +53,7 @@ FOUNDATION_EXPORT NSString*_Nonnull NSStringFromXGPullRequestStatus(XGPullReques
 
 - (NSArray<XGGitHubPullRequestStatus*>*_Nullable) statusesWithError:(NSError*_Nullable __autoreleasing *_Nullable)error;
 
-- (NSError*_Nullable) setStatus:(XGPullRequestStatus)status
-                        message:(NSString*)message
-                      statusURL:(NSURL*_Nullable)statusURL;
+- (NSError*_Nullable) setStatus:(XGPullRequestStatus)status message:(NSString*)message statusURL:(NSURL*_Nullable)statusURL;
 
 - (NSError*_Nullable) addComment:(NSString*)comment;
 

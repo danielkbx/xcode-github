@@ -10,6 +10,7 @@
 
 #import <Foundation/Foundation.h>
 #import "APFormattedString.h"
+#import <XcodeGitHub-Swift.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -80,13 +81,12 @@ NS_ASSUME_NONNULL_BEGIN
 @property (strong, readonly) NSArray<NSString*>*_Nullable tags;
 
 @property (strong, readonly) NSString* summaryString;
-@property (strong, readonly) APFormattedString* formattedDetailString;
+- (APFormattedString *)formattedDetailStringWithFailedTest:(NSArray <XcodeBotTestResult *> * _Nullable)failedTests;
+- (APFormattedString *)formattedDetailString;
 
 @property (strong, readonly) NSURL* integrationLogURL;
 
-- (instancetype) initWithServerName:(NSString*_Nullable)serverName
-                         dictionary:(NSDictionary*_Nullable)dictionary
-                         NS_DESIGNATED_INITIALIZER;
+- (instancetype) initWithServerName:(NSString*_Nullable)serverName dictionary:(NSDictionary*_Nullable)dictionary NS_DESIGNATED_INITIALIZER;
 
 + (instancetype) new NS_UNAVAILABLE;
 - (instancetype) init NS_UNAVAILABLE;
@@ -131,8 +131,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param error       If not nil, on exit, any error encountered is returned here.
  @return A dictionary with a key of the bot name and value of the bot status.
 */
-+ (NSDictionary<NSString*, XGXcodeBot*>*_Nullable) botsForServer:(XGServer*)xcodeServer
-                                        error:(NSError*__autoreleasing _Nullable*_Nullable)error;
++ (NSDictionary<NSString*, XGXcodeBot*>*_Nullable) botsForServer:(XGServer*)xcodeServer error:(NSError*__autoreleasing _Nullable*_Nullable)error;
 
 + (NSString*_Nonnull) botNameFromPRNumber:(NSString*_Nonnull)number title:(NSString*_Nonnull)title;
 
@@ -146,6 +145,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSError*_Nullable) cancelIntegrationID:(NSString*)integrationID;
 - (XGXcodeBotStatus*_Nonnull) status;
 - (NSError*_Nullable) deleteBot;
+
+- (NSArray <XcodeBotTestResult *> *)failedTestOfIntegration:(NSString *)integrationID;
+
 @end
 
 NS_ASSUME_NONNULL_END

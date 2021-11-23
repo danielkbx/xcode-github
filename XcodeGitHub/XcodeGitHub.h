@@ -10,7 +10,6 @@
 
 #import <Foundation/Foundation.h>
 #import "APFormattedString.h"
-#import "BNCLog.h"
 #import "BNCNetworkService.h"
 #import "XGCommand.h"
 #import "XGCommandOptions.h"

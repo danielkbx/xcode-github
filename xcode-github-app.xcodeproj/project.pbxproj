@@ -9,8 +9,6 @@
 /* Begin PBXBuildFile section */
 		2BB6F4D321F9E3FF001E8693 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 2BB6F4D121F9E3FF001E8693 /* Credits.rtf */; };
 		2BE8B585221D2C9E006D8B3D /* libXcodeGitHub.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4DC9E5C9216DCD6700F1F4EE /* libXcodeGitHub.a */; };
-		4D12BA0D20A252CE00E5B1DB /* XGALogViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D12BA0B20A252CE00E5B1DB /* XGALogViewController.m */; };
-		4D12BA0E20A252CE00E5B1DB /* XGALogViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4D12BA0C20A252CE00E5B1DB /* XGALogViewController.xib */; };
 		4D5CC05E2090CAB60042E98B /* BNCKeyChain.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D5CC05D2090CAB60042E98B /* BNCKeyChain.m */; };
 		4D65363621504842000812E1 /* XGAStatusPopover.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D65363521504842000812E1 /* XGAStatusPopover.m */; };
 		4D6536382150486B000812E1 /* XGAStatusPopover.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4D6536372150486B000812E1 /* XGAStatusPopover.xib */; };
@@ -33,6 +31,8 @@
 		4DF656312153620100380FD0 /* BNCEncoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DF6562F2153620100380FD0 /* BNCEncoder.m */; };
 		4DFB5308215DCD6700DB1209 /* XGANetworkServiceBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DFB5307215DCD6700DB1209 /* XGANetworkServiceBrowser.m */; };
 		6504D52E268C43A30025BE33 /* Void.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6504D52D268C43A30025BE33 /* Void.swift */; };
+		65F952AB274CF5A700816CAB /* XGALogViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 65F952A8274CF5A600816CAB /* XGALogViewController.xib */; };
+		65F952AC274CF5A700816CAB /* XGALogViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 65F952AA274CF5A700816CAB /* XGALogViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,9 +57,6 @@
 		2BC31A1222041978003B0EE4 /* xcode-github-cli.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = "xcode-github-cli.md"; path = "Documentation/xcode-github-cli.md"; sourceTree = "<group>"; };
 		2BFD78962216A06E00E63692 /* CHANGELOG.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
 		4D0DD54420597FE6001721C1 /* xcode-github-app.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = "xcode-github-app.md"; path = "Documentation/xcode-github-app.md"; sourceTree = "<group>"; };
-		4D12BA0A20A252CE00E5B1DB /* XGALogViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XGALogViewController.h; sourceTree = "<group>"; };
-		4D12BA0B20A252CE00E5B1DB /* XGALogViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XGALogViewController.m; sourceTree = "<group>"; };
-		4D12BA0C20A252CE00E5B1DB /* XGALogViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = XGALogViewController.xib; sourceTree = "<group>"; };
 		4D5CC05C2090CAB50042E98B /* BNCKeyChain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCKeyChain.h; sourceTree = "<group>"; };
 		4D5CC05D2090CAB60042E98B /* BNCKeyChain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCKeyChain.m; sourceTree = "<group>"; };
 		4D65363421504842000812E1 /* XGAStatusPopover.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XGAStatusPopover.h; sourceTree = "<group>"; };
@@ -101,6 +98,10 @@
 		4DFB5307215DCD6700DB1209 /* XGANetworkServiceBrowser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XGANetworkServiceBrowser.m; sourceTree = "<group>"; };
 		6504D528268C427B0025BE33 /* xcode-github-app-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "xcode-github-app-Bridging-Header.h"; sourceTree = "<group>"; };
 		6504D52D268C43A30025BE33 /* Void.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Void.swift; sourceTree = "<group>"; };
+		65F952A7274CF35200816CAB /* Logging.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Logging.h; sourceTree = "<group>"; };
+		65F952A8274CF5A600816CAB /* XGALogViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = XGALogViewController.xib; sourceTree = "<group>"; };
+		65F952A9274CF5A600816CAB /* XGALogViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XGALogViewController.h; sourceTree = "<group>"; };
+		65F952AA274CF5A700816CAB /* XGALogViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XGALogViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -139,6 +140,7 @@
 		4D76616A2057565200216B72 /* xcode-github-app */ = {
 			isa = PBXGroup;
 			children = (
+				65F952A7274CF35200816CAB /* Logging.h */,
 				4D7661712057565200216B72 /* Assets.xcassets */,
 				2BB6F4D121F9E3FF001E8693 /* Credits.rtf */,
 				4D7661762057565200216B72 /* Info.plist */,
@@ -151,9 +153,9 @@
 				4DAA4665214CBEFF007A39EB /* XGAAddServerPanel.xib */,
 				4D76616B2057565200216B72 /* XGAAppDelegate.h */,
 				4D76616C2057565200216B72 /* XGAAppDelegate.m */,
-				4D12BA0A20A252CE00E5B1DB /* XGALogViewController.h */,
-				4D12BA0B20A252CE00E5B1DB /* XGALogViewController.m */,
-				4D12BA0C20A252CE00E5B1DB /* XGALogViewController.xib */,
+				65F952A9274CF5A600816CAB /* XGALogViewController.h */,
+				65F952AA274CF5A700816CAB /* XGALogViewController.m */,
+				65F952A8274CF5A600816CAB /* XGALogViewController.xib */,
 				4DFB5306215DCD6700DB1209 /* XGANetworkServiceBrowser.h */,
 				4DFB5307215DCD6700DB1209 /* XGANetworkServiceBrowser.m */,
 				4D8352CD20A516A200184259 /* XGAPreferencesViewController.h */,
@@ -305,9 +307,9 @@
 			files = (
 				4D7661722057565200216B72 /* Assets.xcassets in Resources */,
 				4D8352D120A516A200184259 /* XGAPreferencesViewController.xib in Resources */,
+				65F952AB274CF5A700816CAB /* XGALogViewController.xib in Resources */,
 				4D6536382150486B000812E1 /* XGAStatusPopover.xib in Resources */,
 				2BB6F4D321F9E3FF001E8693 /* Credits.rtf in Resources */,
-				4D12BA0E20A252CE00E5B1DB /* XGALogViewController.xib in Resources */,
 				4D8352C620A3F30A00184259 /* XGAStatusViewController.xib in Resources */,
 				4DAA4667214CBEFF007A39EB /* XGAAddServerPanel.xib in Resources */,
 				4D7661752057565200216B72 /* Main.storyboard in Resources */,
@@ -323,9 +325,9 @@
 			files = (
 				4D7D249A20A617DB0086FA59 /* NSAttributedString+App.m in Sources */,
 				4DED4891209BDFCC008DE877 /* BNCGeometry.m in Sources */,
+				65F952AC274CF5A700816CAB /* XGALogViewController.m in Sources */,
 				4DFB5308215DCD6700DB1209 /* XGANetworkServiceBrowser.m in Sources */,
 				4DF0F58E208F923E0015D1F7 /* BNCThreads.m in Sources */,
-				4D12BA0D20A252CE00E5B1DB /* XGALogViewController.m in Sources */,
 				4D8352CC20A4F93A00184259 /* XGAStatusLineView.m in Sources */,
 				4D5CC05E2090CAB60042E98B /* BNCKeyChain.m in Sources */,
 				4DEE32E42162EB20006BD06C /* XGAStatusViewItem.m in Sources */,
@@ -497,6 +499,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(SDKROOT)/usr/lib/swift";
 				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				MARKETING_VERSION = 1.1.3;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.danielkbx.xcode-github-app";
 				PRODUCT_MODULE_NAME = XcodeGitHubApp;
 				PRODUCT_NAME = XcodeGitHub;
@@ -522,6 +525,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(SDKROOT)/usr/lib/swift";
 				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				MARKETING_VERSION = 1.1.3;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.danielkbx.xcode-github-app";
 				PRODUCT_MODULE_NAME = XcodeGitHubApp;
 				PRODUCT_NAME = XcodeGitHub;

@@ -9,7 +9,7 @@
 */
 
 #import "BNCEncoder.h"
-#import "BNCLog.h"
+#import "Logging.h"
 #import <objc/runtime.h>
 
 @implementation BNCEncoder
@@ -76,7 +76,7 @@
         else {
             NSString*message = [NSString stringWithFormat:
                 @"Couldn't decode '%s' type '%s'.", ivarName, encoding];
-            BNCLogError(@"%@", message);
+            LogError(@"%@", message);
             NSError*error = [NSError errorWithDomain:NSCocoaErrorDomain
                 code:NSFormattingError userInfo:@{ NSLocalizedDescriptionKey: message }];
             return error;
@@ -138,7 +138,7 @@
         else {
             NSString*message = [NSString stringWithFormat:
                 @"Couldn't decode '%s' type '%s'.", ivarName, encoding];
-            BNCLogError(@"%@", message);
+            LogError(@"%@", message);
             NSError*error = [NSError errorWithDomain:NSCocoaErrorDomain
                 code:NSFormattingError userInfo:@{ NSLocalizedDescriptionKey: message }];
             return error;
@@ -159,7 +159,7 @@
     }
     @catch (id e) {
         NSString*message = [NSString stringWithFormat:@"Can't copy '%@': %@.", object, e];
-        BNCLogError(@"%@", message);
+        LogError(@"%@", message);
         error = [NSError errorWithDomain:NSCocoaErrorDomain code:1 userInfo:@{NSLocalizedDescriptionKey: message}];
     }
     if (error_) *error_ = error;
@@ -170,43 +170,47 @@
         fromData:(NSData*)data
         classes:(NSSet<Class>*)classes
         ignoringIvars:(NSArray*_Nullable)ignoreIvars {
-    NSError*error = nil;
+    NSError *error = nil;
     if (!object || !data) {
         return [NSError errorWithDomain:NSCocoaErrorDomain code:1 userInfo:@{
             NSLocalizedDescriptionKey: @"No object or data"
         }];
     }
-    @try {
-        NSKeyedUnarchiver*unarchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
-        unarchiver.requiresSecureCoding = YES;
-        [BNCEncoder decodeInstance:object withCoder:unarchiver classes:classes ignoring:ignoreIvars];
-    }
-    @catch(id e) {
-        NSString*message = [NSString stringWithFormat:@"Can't decode '%@': %@.", object, e];
-        BNCLogError(@"%@", message);
+        
+    NSKeyedUnarchiver*unarchiver = [[NSKeyedUnarchiver alloc] initForReadingFromData:data error:&error];
+    if (error) {
+        NSString*message = [NSString stringWithFormat:@"Can't decode '%@': %@.", object, error];
+        LogError(@"%@", message);
         error = [NSError errorWithDomain:NSCocoaErrorDomain code:1 userInfo:@{NSLocalizedDescriptionKey: message}];
+        return error;
     }
+    unarchiver.requiresSecureCoding = NO;
+    [BNCEncoder decodeInstance:object withCoder:unarchiver classes:classes ignoring:ignoreIvars];
+    
     return error;
 }
 
 + (NSError*) copyInstance:(id)toInstance
-         fromInstance:(id)fromInstance
-             ignoring:(NSArray<NSString*>*_Nullable)ignoreIvarsArray {
+             fromInstance:(id)fromInstance
+                 ignoring:(NSArray<NSString*>*_Nullable)ignoreIvarsArray {
     NSError*error = nil;
-    @try {
-        NSMutableData*data = [[NSMutableData alloc] init];
-        NSKeyedArchiver*archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:data];
-        [BNCEncoder encodeInstance:fromInstance withCoder:archiver ignoring:ignoreIvarsArray];
-        [archiver finishEncoding];
-        NSKeyedUnarchiver*unarchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
-        unarchiver.requiresSecureCoding = YES;
-        [BNCEncoder decodeInstance:toInstance withCoder:unarchiver classes:nil ignoring:ignoreIvarsArray];
-    }
-    @catch (id e) {
-        NSString*message = [NSString stringWithFormat:@"Can't copy '%@': %@.", fromInstance, e];
-        BNCLogError(@"%@", message);
+    
+    NSMutableData *data = [[NSMutableData alloc] init];
+    //NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:data];
+    NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initRequiringSecureCoding:NO];
+    [BNCEncoder encodeInstance:fromInstance withCoder:archiver ignoring:ignoreIvarsArray];
+    [archiver finishEncoding];
+    NSKeyedUnarchiver*unarchiver = [[NSKeyedUnarchiver alloc] initForReadingFromData:data error:&error];
+    if (error) {
+        NSString*message = [NSString stringWithFormat:@"Can't copy '%@': %@.", fromInstance, error];
+        LogError(@"%@", message);
         error = [NSError errorWithDomain:NSCocoaErrorDomain code:1 userInfo:@{NSLocalizedDescriptionKey: message}];
+        return error;
     }
+    
+    unarchiver.requiresSecureCoding = YES;
+    [BNCEncoder decodeInstance:toInstance withCoder:unarchiver classes:nil ignoring:ignoreIvarsArray];
+                
     return error;
 }
 
@@ -228,14 +232,14 @@
     self = [super init];
     if (!self) return self;
     NSError*error = [BNCEncoder decodeInstance:self withCoder:aDecoder classes:nil ignoring:self.class.ignoreIvars];
-    if (error) BNCLogError(@"Can't decode %@: %@", NSStringFromClass(self.class), error);
+    if (error) LogError(@"Can't decode %@: %@", NSStringFromClass(self.class), error);
     return self;
 }
 
 - (void) encodeWithCoder:(NSCoder *)aCoder {
     @synchronized (self) {
         NSError*error = [BNCEncoder encodeInstance:self withCoder:aCoder ignoring:self.class.ignoreIvars];
-        if (error) BNCLogError(@"Can't encode %@: %@", NSStringFromClass(self.class), error);
+        if (error) LogError(@"Can't encode %@: %@", NSStringFromClass(self.class), error);
     }
 }
 

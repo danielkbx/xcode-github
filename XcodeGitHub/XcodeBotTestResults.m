@@ -10,7 +10,6 @@
 */
 
 #import "XcodeBotTestResults.h"
-#import "BNCLog.h"
 #import "BNCNetworkService.h"
 #import <XcodeGitHub-Swift.h>
 

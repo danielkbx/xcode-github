@@ -9,7 +9,7 @@
 */
 
 #import "BNCKeyChain.h"
-#import "BNCLog.h"
+#import "Logging.h"
 
 // Apple Keychain Reference:
 // https://developer.apple.com/library/content/documentation/Conceptual/
@@ -77,7 +77,7 @@ CFStringRef SecCopyErrorMessageString(OSStatus status, void *reserved) {
     if (status == errSecItemNotFound) status = 0;
     if (status) {
         NSError *localError = [self errorWithKey:@"<all>" OSStatus:status];
-        BNCLogDebugSDK(@"Can't retrieve key: %@.", localError);
+        LogDebug(@"Can't retrieve key: %@.", localError);
         if (error) *error = localError;
         if (valueData) CFRelease(valueData);
         return nil;
@@ -129,7 +129,7 @@ CFStringRef SecCopyErrorMessageString(OSStatus status, void *reserved) {
     }
     if (status) {
         NSError *localError = [self errorWithKey:key OSStatus:status];
-        BNCLogDebugSDK(@"Can't retrieve key: %@.", localError);
+        LogDebug(@"Can't retrieve key: %@.", localError);
         if (error) *error = localError;
         if (valueData) CFRelease(valueData);
         return nil;
@@ -178,7 +178,7 @@ CFStringRef SecCopyErrorMessageString(OSStatus status, void *reserved) {
     OSStatus status = SecItemDelete((__bridge CFDictionaryRef)dictionary);
     if (status != errSecSuccess && status != errSecItemNotFound) {
         NSError *error = [self errorWithKey:key OSStatus:status];
-        BNCLogDebugSDK(@"Can't clear to store key: %@.", error);
+        LogDebug(@"Can't clear to store key: %@.", error);
     }
 
     dictionary[(__bridge id)kSecValueData] = valueData;
@@ -194,7 +194,7 @@ CFStringRef SecCopyErrorMessageString(OSStatus status, void *reserved) {
     status = SecItemAdd((__bridge CFDictionaryRef)dictionary, NULL);
     if (status) {
         NSError *error = [self errorWithKey:key OSStatus:status];
-        BNCLogDebugSDK(@"Can't store key: %@.", error);
+        LogDebug(@"Can't store key: %@.", error);
         return error;
     }
     return nil;
@@ -212,7 +212,7 @@ CFStringRef SecCopyErrorMessageString(OSStatus status, void *reserved) {
     if (status == errSecItemNotFound) status = errSecSuccess;
     if (status) {
         NSError *error = [self errorWithKey:key OSStatus:status];
-        BNCLogDebugSDK(@"Can't remove key: %@.", error);
+        LogDebug(@"Can't remove key: %@.", error);
         return error;
     }
     return nil;

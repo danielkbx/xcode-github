@@ -10,8 +10,8 @@
 
 #import "XGGitHubPullRequest.h"
 #import "XGUtility.h"
-#import "BNCLog.h"
 #import "BNCNetworkService.h"
+#import "Logging.h"
 
 NSString*_Nonnull NSStringFromXGPullRequestStatus(XGPullRequestStatus status) {
     NSArray<NSString*>*statusStrings = @[
@@ -140,7 +140,7 @@ NSString*_Nonnull NSStringFromXGPullRequestStatus(XGPullRequestStatus status) {
             localError = [NSError errorWithDomain:NSNetServicesErrorDomain code:NSURLErrorBadURL userInfo:@{
                     NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Bad URL '%@'.", serverURL]
                 }];
-            BNCLogError(@"Bad URL '%@'.", serverURL);
+            LogError(@"Bad URL '%@'.", serverURL);
             goto exit;
         }
 
@@ -160,14 +160,14 @@ NSString*_Nonnull NSStringFromXGPullRequestStatus(XGPullRequestStatus status) {
 
         if (operation.error) {
             NSString *message = operation.stringFromResponseData;
-            if (message.length) BNCLogError(@"From GitHub: %@.", message);
+            if (message.length) LogError(@"From GitHub: %@.", message);
             localError = operation.error;
             goto exit;
         }
         [operation deserializeJSONResponseData];
         if (operation.error) {
             NSString *message = operation.stringFromResponseData;
-            if (message.length) BNCLogError(@"From GitHub: %@.", message);
+            if (message.length) LogError(@"From GitHub: %@.", message);
             localError = operation.error;
             goto exit;
         }
@@ -187,7 +187,7 @@ NSString*_Nonnull NSStringFromXGPullRequestStatus(XGPullRequestStatus status) {
         NSArray *array = (id) operation.responseData;
         if (![array isKindOfClass:NSArray.class]) {
             NSString *message = operation.stringFromResponseData;
-            if (message.length) BNCLogError(@"From GitHub: %@.", message);
+            if (message.length) LogError(@"From GitHub: %@.", message);
             localError =
                 [NSError errorWithDomain:NSNetServicesErrorDomain
                     code:NSURLErrorBadServerResponse
@@ -236,7 +236,7 @@ exit:
             [NSError errorWithDomain:NSNetServicesErrorDomain code:NSURLErrorBadURL userInfo:@{
                 NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Bad URL '%@'.", URL]
             }];
-        BNCLogError(@"Bad URL '%@'.", URL);
+        LogError(@"Bad URL '%@'.", URL);
         goto exit;
     }
 
@@ -257,14 +257,14 @@ exit:
 
     if (operation.error) {
         NSString *message = operation.stringFromResponseData;
-        if (message.length) BNCLogError(@"From GitHub: %@.", message);
+        if (message.length) LogError(@"From GitHub: %@.", message);
         error = operation.error;
         goto exit;
     }
     [operation deserializeJSONResponseData];
     if (operation.error) {
         NSString *message = operation.stringFromResponseData;
-        if (message.length) BNCLogError(@"From GitHub: %@.", message);
+        if (message.length) LogError(@"From GitHub: %@.", message);
         error = operation.error;
         goto exit;
     }
@@ -272,7 +272,7 @@ exit:
         error = [NSError errorWithDomain:NSNetServicesErrorDomain
             code:NSNetServicesInvalidError userInfo:@{NSLocalizedDescriptionKey:
                 [NSString stringWithFormat:@"HTTP Status %ld", (long) operation.HTTPStatusCode]}];
-        BNCLogError(@"Response was: %@.", [operation stringFromResponseData]);
+        LogError(@"Response was: %@.", [operation stringFromResponseData]);
         goto exit;
     }
     NSArray*array = (NSArray*) operation.responseData;
@@ -280,7 +280,7 @@ exit:
         error = [NSError errorWithDomain:NSNetServicesErrorDomain
             code:NSNetServicesInvalidError userInfo:@{NSLocalizedDescriptionKey:
                 [NSString stringWithFormat:@"Expecting an array: %@.", NSStringFromClass(array.class)]}];
-        BNCLogError(@"Response was: %@.", [operation stringFromResponseData]);
+        LogError(@"Response was: %@.", [operation stringFromResponseData]);
         goto exit;
     }
     results = [NSMutableArray new];
@@ -308,7 +308,7 @@ exit:
             [NSError errorWithDomain:NSNetServicesErrorDomain code:NSURLErrorBadURL userInfo:@{
                 NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Bad URL '%@'.", URL]
             }];
-        BNCLogError(@"Bad URL '%@'.", URL);
+        LogError(@"Bad URL '%@'.", URL);
         return error;
     }
 
@@ -336,20 +336,20 @@ exit:
 
     if (operation.error) {
         NSString *message = operation.stringFromResponseData;
-        if (message.length) BNCLogError(@"From GitHub: %@.", message);
+        if (message.length) LogError(@"From GitHub: %@.", message);
         return operation.error;
     }
     [operation deserializeJSONResponseData];
     if (operation.error) {
         NSString *message = operation.stringFromResponseData;
-        if (message.length) BNCLogError(@"From GitHub: %@.", message);
+        if (message.length) LogError(@"From GitHub: %@.", message);
         return operation.error;
     }
     if (operation.HTTPStatusCode != 201) {
         error = [NSError errorWithDomain:NSNetServicesErrorDomain
             code:NSNetServicesInvalidError userInfo:@{NSLocalizedDescriptionKey:
                 [NSString stringWithFormat:@"HTTP Status %ld", (long) operation.HTTPStatusCode]}];
-        BNCLogError(
+        LogError(
             @"Can't access GitHub status. Is write access enabled and the token set?\nResponse was: %@.",
             [operation stringFromResponseData]
         );
@@ -369,7 +369,7 @@ exit:
             [NSError errorWithDomain:NSNetServicesErrorDomain code:NSURLErrorBadURL userInfo:@{
                 NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Bad URL '%@'.", URL]
             }];
-        BNCLogError(@"Bad URL '%@'.", URL);
+        LogError(@"Bad URL '%@'.", URL);
         return error;
     }
 
@@ -394,20 +394,20 @@ exit:
 
     if (operation.error) {
         NSString *message = operation.stringFromResponseData;
-        if (message.length) BNCLogError(@"From GitHub: %@.", message);
+        if (message.length) LogError(@"From GitHub: %@.", message);
         return operation.error;
     }
     [operation deserializeJSONResponseData];
     if (operation.error) {
         NSString *message = operation.stringFromResponseData;
-        if (message.length) BNCLogError(@"From GitHub: %@.", message);
+        if (message.length) LogError(@"From GitHub: %@.", message);
         return operation.error;
     }
     if (operation.HTTPStatusCode != 201) {
         error = [NSError errorWithDomain:NSNetServicesErrorDomain
             code:NSNetServicesInvalidError userInfo:@{NSLocalizedDescriptionKey:
                 [NSString stringWithFormat:@"HTTP Status %ld", (long) operation.HTTPStatusCode]}];
-        BNCLogError(@"Response was: %@.", [operation stringFromResponseData]);
+        LogError(@"Response was: %@.", [operation stringFromResponseData]);
         return error;
     }
 

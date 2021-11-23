@@ -19,9 +19,7 @@
 		4DDAA4F5216AC08F002F3F8E /* XGSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DDAA4EA216AC08F002F3F8E /* XGSettings.h */; };
 		4DDAA4F6216AC08F002F3F8E /* XGCommandOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DDAA4EB216AC08F002F3F8E /* XGCommandOptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4DDAA4F7216AC08F002F3F8E /* XGCommandOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DDAA4EC216AC08F002F3F8E /* XGCommandOptions.m */; };
-		4DDAA53C216AC0EE002F3F8E /* BNCLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DDAA538216AC0EE002F3F8E /* BNCLog.m */; };
 		4DDAA53D216AC0EE002F3F8E /* APFormattedString.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DDAA539216AC0EE002F3F8E /* APFormattedString.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4DDAA53E216AC0EE002F3F8E /* BNCLog.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DDAA53A216AC0EE002F3F8E /* BNCLog.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4DDAA53F216AC0EE002F3F8E /* APFormattedString.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DDAA53B216AC0EE002F3F8E /* APFormattedString.m */; };
 		4DDAA543216AC1DA002F3F8E /* BNCNetworkService.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DDAA541216AC1DA002F3F8E /* BNCNetworkService.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4DDAA544216AC1DA002F3F8E /* BNCNetworkService.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DDAA542216AC1DA002F3F8E /* BNCNetworkService.m */; };
@@ -30,6 +28,7 @@
 		6504D525268C3D130025BE33 /* XCodeBotTestResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6504D524268C3D120025BE33 /* XCodeBotTestResult.swift */; };
 		6516423A268B622800C8A46F /* XcodeBotTestResults.h in Headers */ = {isa = PBXBuildFile; fileRef = 65164238268B622800C8A46F /* XcodeBotTestResults.h */; };
 		6516423B268B622800C8A46F /* XcodeBotTestResults.m in Sources */ = {isa = PBXBuildFile; fileRef = 65164239268B622800C8A46F /* XcodeBotTestResults.m */; };
+		65F952A6274CF11100816CAB /* Logging.h in Headers */ = {isa = PBXBuildFile; fileRef = 65F952A5274CEE5A00816CAB /* Logging.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -46,9 +45,7 @@
 		4DDAA4EA216AC08F002F3F8E /* XGSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XGSettings.h; sourceTree = "<group>"; };
 		4DDAA4EB216AC08F002F3F8E /* XGCommandOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XGCommandOptions.h; sourceTree = "<group>"; };
 		4DDAA4EC216AC08F002F3F8E /* XGCommandOptions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XGCommandOptions.m; sourceTree = "<group>"; };
-		4DDAA538216AC0EE002F3F8E /* BNCLog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BNCLog.m; path = Vendor/Branch/BNCLog.m; sourceTree = SOURCE_ROOT; };
 		4DDAA539216AC0EE002F3F8E /* APFormattedString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = APFormattedString.h; path = Vendor/Branch/APFormattedString.h; sourceTree = SOURCE_ROOT; };
-		4DDAA53A216AC0EE002F3F8E /* BNCLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BNCLog.h; path = Vendor/Branch/BNCLog.h; sourceTree = SOURCE_ROOT; };
 		4DDAA53B216AC0EE002F3F8E /* APFormattedString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = APFormattedString.m; path = Vendor/Branch/APFormattedString.m; sourceTree = SOURCE_ROOT; };
 		4DDAA541216AC1DA002F3F8E /* BNCNetworkService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BNCNetworkService.h; path = Vendor/Branch/BNCNetworkService.h; sourceTree = SOURCE_ROOT; };
 		4DDAA542216AC1DA002F3F8E /* BNCNetworkService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BNCNetworkService.m; path = Vendor/Branch/BNCNetworkService.m; sourceTree = SOURCE_ROOT; };
@@ -61,6 +58,7 @@
 		6504D524268C3D120025BE33 /* XCodeBotTestResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XCodeBotTestResult.swift; sourceTree = "<group>"; };
 		65164238268B622800C8A46F /* XcodeBotTestResults.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XcodeBotTestResults.h; sourceTree = "<group>"; };
 		65164239268B622800C8A46F /* XcodeBotTestResults.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XcodeBotTestResults.m; sourceTree = "<group>"; };
+		65F952A5274CEE5A00816CAB /* Logging.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = "../xcode-github-app/Logging.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -115,6 +113,7 @@
 				65164239268B622800C8A46F /* XcodeBotTestResults.m */,
 				6504D524268C3D120025BE33 /* XCodeBotTestResult.swift */,
 				6504D523268C3D120025BE33 /* XcodeGitHub-Bridging-Header.h */,
+				65F952A5274CEE5A00816CAB /* Logging.h */,
 			);
 			path = XcodeGitHub;
 			sourceTree = "<group>";
@@ -133,8 +132,6 @@
 			children = (
 				4DDAA539216AC0EE002F3F8E /* APFormattedString.h */,
 				4DDAA53B216AC0EE002F3F8E /* APFormattedString.m */,
-				4DDAA53A216AC0EE002F3F8E /* BNCLog.h */,
-				4DDAA538216AC0EE002F3F8E /* BNCLog.m */,
 				4DDAA541216AC1DA002F3F8E /* BNCNetworkService.h */,
 				4DDAA542216AC1DA002F3F8E /* BNCNetworkService.m */,
 			);
@@ -154,11 +151,11 @@
 				4DDAA53D216AC0EE002F3F8E /* APFormattedString.h in Headers */,
 				6516423A268B622800C8A46F /* XcodeBotTestResults.h in Headers */,
 				4DDAA551216AD102002F3F8E /* XcodeGitHub.h in Headers */,
-				4DDAA53E216AC0EE002F3F8E /* BNCLog.h in Headers */,
 				4D4CBE2E218980F3007FE904 /* XGUtility.h in Headers */,
 				4DDAA4F5216AC08F002F3F8E /* XGSettings.h in Headers */,
 				4DDAA4EF216AC08F002F3F8E /* XGXcodeBot.h in Headers */,
 				4DDAA543216AC1DA002F3F8E /* BNCNetworkService.h in Headers */,
+				65F952A6274CF11100816CAB /* Logging.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -222,7 +219,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				4DDAA4F4216AC08F002F3F8E /* XGGitHubPullRequest.m in Sources */,
-				4DDAA53C216AC0EE002F3F8E /* BNCLog.m in Sources */,
 				4DDAA4F3216AC08F002F3F8E /* XGCommand.m in Sources */,
 				4DDAA53F216AC0EE002F3F8E /* APFormattedString.m in Sources */,
 				4DDAA544216AC1DA002F3F8E /* BNCNetworkService.m in Sources */,

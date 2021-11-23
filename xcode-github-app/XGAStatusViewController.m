@@ -47,6 +47,8 @@
 }
 
 - (void)awakeFromNib {
+    [super awakeFromNib];
+    
     if (!self.awake) {
         self.awake = YES;
         [self.tableView setDoubleAction:@selector(showInfo:)];

@@ -9,7 +9,7 @@
 */
 
 #import "BNCNetworkService.h"
-#import "BNCLog.h"
+#import "Logging.h"
 
 #pragma mark  BNCNetworkOperation
 
@@ -129,7 +129,7 @@
             create:YES
             error:&error];
     if (error) {
-        BNCLogError(@"Error locating cache directory. Will use local directory instead. %@.", error);
+        LogError(@"Error locating cache directory. Will use local directory instead. %@.", error);
         cacheURL = [NSURL fileURLWithPath:@"."];
     }
     cacheURL = [cacheURL URLByAppendingPathComponent:@"io.branch.network.cache"];
@@ -210,7 +210,7 @@
     if (dictionaryOrArray) {
         NSError *error = nil;
         data = [NSJSONSerialization dataWithJSONObject:dictionaryOrArray options:0 error:&error];
-        if (error) BNCLogError(@"Can't convert to JSON: %@.", error);
+        if (error) LogError(@"Can't convert to JSON: %@.", error);
     }
     BNCNetworkOperation *operation =
         [[BNCNetworkService shared]
@@ -232,7 +232,7 @@
                 operation.response = (NSHTTPURLResponse*) response;
                 operation.error = error;
                 operation.dateFinish = [NSDate date];
-                BNCLogDebug(@"Network finish operation %@ %1.3fs. Status %ld error %@.\n%@.",
+                LogDebug(@"Network finish operation %@ %1.3fs. Status %ld error %@.\n%@.",
                     operation.request.URL.absoluteString,
                     [operation.dateFinish timeIntervalSinceDate:operation.dateStart],
                     (long)operation.HTTPStatusCode,
@@ -241,7 +241,7 @@
                 if (operation.completionBlock)
                     operation.completionBlock(operation);
             }];
-    BNCLogDebug(@"Network start operation %@.", operation.request.URL);
+    LogDebug(@"Network start operation %@.", operation.request.URL);
     [operation.sessionTask resume];
 }
 
@@ -330,7 +330,7 @@ didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
 exit:
     if (err) {
         NSError *error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
-        BNCLogError(@"Error while validating cert: %@.", error);
+        LogError(@"Error while validating cert: %@.", error);
     }
     if (key) CFRelease(key);
     if (hostPolicy) CFRelease(hostPolicy);

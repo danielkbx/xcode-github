@@ -9,11 +9,9 @@
 */
 
 #import <Cocoa/Cocoa.h>
-#import "XGALogViewController.h"
 
 int main(int argc, const char * argv[]) {
     @autoreleasepool {
-        [XGALogViewController startLog];
         return NSApplicationMain(argc, argv);
     }
 }

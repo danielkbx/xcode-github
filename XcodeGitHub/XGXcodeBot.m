@@ -10,10 +10,10 @@
 
 #import "XGXcodeBot.h"
 #import "XGUtility.h"
-#import "BNCLog.h"
 #import "BNCNetworkService.h"
 #import "APFormattedString.h"
 #import <XcodeGitHub-Swift.h>
+#import "Logging.h"
 
 @implementation XGServer
 
@@ -323,7 +323,7 @@ static NSMutableDictionary <NSString *, NSMutableDictionary<NSString *, NSArray 
         _branch = location[@"DVTSourceControlBranchIdentifierKey"];
     }
     @catch(id error) {
-        BNCLogError(@"Can't retrieve source control URL: %@", error);
+        LogError(@"Can't retrieve source control URL: %@", error);
     }
 
     NSRange repoRange = [self.sourceControlRepository rangeOfString:@"/" options:NSBackwardsSearch];
@@ -382,7 +382,7 @@ static NSMutableDictionary <NSString *, NSMutableDictionary<NSString *, NSArray 
                             [NSString stringWithFormat:@"Bad server name '%@'.", xcodeServer.server]
                     }
                 ];
-            BNCLogError(@"Bad server name '%@'.", xcodeServer.server);
+            LogError(@"Bad server name '%@'.", xcodeServer.server);
             goto exit;
         }
 
@@ -510,7 +510,7 @@ exit:
         localError = [NSError errorWithDomain:NSNetServicesErrorDomain code:NSURLErrorBadURL userInfo:@{
             NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Bad server name '%@'.", self.server.server]
         }];
-        BNCLogError(@"Bad server name '%@'.", self.server.server);
+        LogError(@"Bad server name '%@'.", self.server.server);
         return localError;
     }
 
@@ -568,7 +568,7 @@ exit:
                             [NSString stringWithFormat:@"Bad server name '%@'.", self.server.server]
                     }
                 ];
-            BNCLogError(@"Bad server name '%@'.", self.server.server);
+            LogError(@"Bad server name '%@'.", self.server.server);
             goto exit;
         }
         __auto_type dictionary = [NSMutableDictionary new];
@@ -606,7 +606,7 @@ exit:
             localError = [NSError errorWithDomain:NSNetServicesErrorDomain
                 code:NSNetServicesInvalidError userInfo:@{NSLocalizedDescriptionKey:
                     [NSString stringWithFormat:@"HTTP Status %ld", (long) operation.HTTPStatusCode]}];
-            BNCLogDebug(@"Response was: %@.", [operation stringFromResponseData]);
+            LogDebug(@"Response was: %@.", [operation stringFromResponseData]);
             goto exit;
         }
         [operation deserializeJSONResponseData];
@@ -648,7 +648,7 @@ exit:
             localError = [NSError errorWithDomain:NSNetServicesErrorDomain
                 code:NSNetServicesInvalidError userInfo:@{NSLocalizedDescriptionKey:
                     [NSString stringWithFormat:@"HTTP Status %ld", (long) operation.HTTPStatusCode]}];
-            BNCLogDebug(@"Response was: %@.", [operation stringFromResponseData]);
+            LogDebug(@"Response was: %@.", [operation stringFromResponseData]);
             goto exit;
         }
         [operation deserializeJSONResponseData];
@@ -729,7 +729,7 @@ exit:
             localError = [NSError errorWithDomain:NSNetServicesErrorDomain
                 code:NSNetServicesInvalidError userInfo:@{NSLocalizedDescriptionKey:
                     [NSString stringWithFormat:@"HTTP Status %ld", (long) operation.HTTPStatusCode]}];
-            BNCLogDebug(@"Response was: %@.", [operation stringFromResponseData]);
+            LogDebug(@"Response was: %@.", [operation stringFromResponseData]);
             goto exit;
         }
         [operation deserializeJSONResponseData];
@@ -766,7 +766,7 @@ exit:
                         [NSString stringWithFormat:@"Bad server name '%@'.", self.server.server]
                 }
             ];
-        BNCLogError(@"Bad server name '%@'.", self.server.server);
+        LogError(@"Bad server name '%@'.", self.server.server);
         return localError;
     }
 
@@ -812,7 +812,7 @@ exit:
                         [NSString stringWithFormat:@"Bad server name '%@'.", self.server.server]
                 }
             ];
-        BNCLogError(@"Bad server name '%@'.", self.server.server);
+        LogError(@"Bad server name '%@'.", self.server.server);
         return localError;
     }
 
@@ -850,7 +850,7 @@ exit:
         return tests;
     }
     
-    BNCLogDebug(@"Getting test results");
+    LogDebug(@"Getting test results");
     NSString *resultsURLString = [NSString stringWithFormat: @"https://%@:20343/api/integrations/%@/test/batch", self.server.server, integrationID];
     NSURL *resultsURLS = [NSURL URLWithString:resultsURLString];
 
@@ -866,7 +866,7 @@ exit:
     dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
 
     if (operation.error) {
-        BNCLogError(@"Failed to get test results: %@", operation.error.localizedDescription);
+        LogError(@"Failed to get test results: %@", operation.error.localizedDescription);
         return 0;
     }
     
@@ -874,7 +874,7 @@ exit:
         NSData *data = (NSData *)operation.responseData;
         tests = [XcodeBotTestResult resultsFromData:data onlyFailed: YES];
     }
-    BNCLogDebug(@"Got %lui failed tests", (unsigned long)tests.count);
+    LogDebug(@"Got %lui failed tests", (unsigned long)tests.count);
     
     NSMutableDictionary *perBotDictionary = failedTestsForIntegrationID[self.botID];
     if (!perBotDictionary) {

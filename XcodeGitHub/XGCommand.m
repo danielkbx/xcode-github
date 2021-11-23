@@ -12,11 +12,11 @@
 #import "XGXcodeBot.h"
 #import "XGGitHubPullRequest.h"
 #import "XGSettings.h"
-#import "BNCLog.h"
 #import "BNCNetworkService.h"
 #include <sysexits.h>
 #import "XcodeBotTestResults.h"
 #import <XcodeGitHub-Swift.h>
+#import "Logging.h"
 
 #pragma mark Bot Functions
 
@@ -27,11 +27,11 @@ NSError*_Nullable XGCreateBotWithOptions(
         NSString*_Nonnull newBotName
     ) {
     if (options.dryRun) {
-        BNCLog(@"Would create bot '%@'.", newBotName);
+        Log(@"Would create bot '%@'.", newBotName);
         return nil;
     }
     NSError *error = nil;
-    BNCLogDebug(@"Creating bot '%@'...", newBotName);
+    LogDebug(@"Creating bot '%@'...", newBotName);
     [pr setStatus:XGPullRequestStatusPending
         message:@"Creating Xcode bot..."
         statusURL:nil];
@@ -42,9 +42,9 @@ NSError*_Nullable XGCreateBotWithOptions(
         error:&error];
     if (error) {
         if (error.code == -999) {
-            BNCLogError(@"Can't create Xcode bot, permission error: %@.", error);
+            LogError(@"Can't create Xcode bot, permission error: %@.", error);
         } else {
-            BNCLogError(@"Can't create Xcode bot: %@.", error);
+            LogError(@"Can't create Xcode bot: %@.", error);
         }
     }
     return error;
@@ -56,13 +56,13 @@ NSError*_Nullable XGDeleteBotWithOptions(
     ) {
     NSError*error = nil;
     if (options.dryRun) {
-        BNCLog(@"Would delete bot '%@'.", bot.name);
+        Log(@"Would delete bot '%@'.", bot.name);
         return error;
     }
-    BNCLogDebug(@"Deleting old bot '%@'...", bot.name);
+    LogDebug(@"Deleting old bot '%@'...", bot.name);
     error = [bot deleteBot];
     if (error) {
-        BNCLogError(
+        LogError(
             @"Can't remove old bot named '%@' from server: %@.", bot.name, error
         );
         return error;
@@ -157,7 +157,7 @@ NSError*_Nullable XGUpdatePRStatusOnGitHub(XGCommandOptions*_Nonnull options, XG
         return nil;
 
     if (options.dryRun) {
-        BNCLog(@"Would update PR#%@ with status %@: %@.",
+        Log(@"Would update PR#%@ with status %@: %@.",
             pr.number, NSStringFromXGPullRequestStatus(status), message);
         return nil;
     }
@@ -197,22 +197,22 @@ NSError* XGShowXcodeBotStatus(XGCommandOptions* options) {
     // Allow self-signed certs from the xcode server:
     [BNCNetworkService shared].allowAnySSLCert = YES;
 
-    BNCLogDebug(@"Refreshing Xcode bot status...");
+    LogDebug(@"Refreshing Xcode bot status...");
     NSError *error = nil;
     NSDictionary<NSString*, XGXcodeBot*> *bots = [XGXcodeBot botsForServer:xcodeServer error:&error];
     if (error) {
-        BNCLogError(@"Can't retrieve Xcode bot information from '%@': %@.",
+        LogError(@"Can't retrieve Xcode bot information from '%@': %@.",
             xcodeServer.server, error);
         return error;
     }
 
     if (bots.count == 0) {
-        BNCLog(@"Xcode bot status: No Xcode bots.");
+        Log(@"Xcode bot status: No Xcode bots.");
     } else {
-        BNCLog(@"Xcode bot status:");
+        Log(@"Xcode bot status:");
         for (XGXcodeBot *bot in bots.objectEnumerator) {
             XGXcodeBotStatus *status = [bot status];
-            BNCLog(@"%@", status);
+            Log(@"%@", status);
         }
     }
     return nil;
@@ -233,10 +233,10 @@ NSError*_Nullable XGUpdateXcodeBotsWithGitHub(XGCommandOptions*_Nonnull options)
         // Allow self-signed certs from the xcode server:
         [BNCNetworkService shared].allowAnySSLCert = YES;
 
-        BNCLogDebug(@"Getting Xcode bots on '%@'...", options.xcodeServerName);
+        LogDebug(@"Getting Xcode bots on '%@'...", options.xcodeServerName);
         NSDictionary<NSString*, XGXcodeBot*> *bots = [XGXcodeBot botsForServer:xcodeServer error:&error];
         if (error) {
-            BNCLogError(@"Can't retrieve Xcode bot information from %@: %@.", options.xcodeServerName, error);
+            LogError(@"Can't retrieve Xcode bot information from %@: %@.", options.xcodeServerName, error);
             returnCode = EX_NOHOST;
             goto exit;
         }
@@ -249,19 +249,19 @@ NSError*_Nullable XGUpdateXcodeBotsWithGitHub(XGCommandOptions*_Nonnull options)
         // Check that the template bot exists:
         XGXcodeBot *templateBot = bots[options.templateBotName];
         if (!templateBot) {
-            BNCLogError(@"Can't find Xcode template bot named '%@'.", options.templateBotName);
+            LogError(@"Can't find Xcode template bot named '%@'.", options.templateBotName);
             returnCode = EX_CONFIG;
             goto exit;
         }
 
-        BNCLogDebug(@"Getting pull requests for '%@'...", templateBot.sourceControlRepository);
+        LogDebug(@"Getting pull requests for '%@'...", templateBot.sourceControlRepository);
 
         NSDictionary<NSString*, XGGitHubPullRequest*> *pullRequests =
             [XGGitHubPullRequest pullsRequestsForRepository:templateBot.sourceControlRepository
                 authToken:options.githubAuthToken
                 error:&error];
         if (error) {
-            BNCLogError(@"Can't retrieve pull requests from '%@': %@.",
+            LogError(@"Can't retrieve pull requests from '%@': %@.",
             templateBot.sourceControlRepository, error);
             returnCode = EX_NOHOST;
             goto exit;

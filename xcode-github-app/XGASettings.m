@@ -12,6 +12,7 @@
 #import "BNCKeyChain.h"
 #import "BNCEncoder.h"
 #import <XcodeGitHub/XcodeGitHub.h>
+#import "Logging.h"
 
 #pragma mark XGAServer
 
@@ -45,7 +46,7 @@ NSString*_Nonnull XGACleanString(NSString*_Nullable string) {
                 key:self.user
                 error:&error];
         if (error) {
-            BNCLog(@"Can't retrieve password: %@.", error);
+            Log(@"Can't retrieve password: %@.", error);
             self.password = @"";
         }
     }
@@ -62,7 +63,7 @@ NSString*_Nonnull XGACleanString(NSString*_Nullable string) {
                     forService:self.server
                     key:self.user
                     cloudAccessGroup:nil];
-            if (error) BNCLog(@"Can't save password: %@.", error);
+            if (error) Log(@"Can't save password: %@.", error);
         }
     }
 }
@@ -118,7 +119,7 @@ NSString*_Nonnull XGACleanString(NSString*_Nullable string) {
             [BNCKeyChain retrieveValueForService:kXGAServiceName
                 key:@"GitHubToken"
                 error:&error];
-        if (error) BNCLog(@"Can't retrieve GitHubToken: %@.", error);
+        if (error) Log(@"Can't retrieve GitHubToken: %@.", error);
         return token;
     }
 }
@@ -130,7 +131,7 @@ NSString*_Nonnull XGACleanString(NSString*_Nullable string) {
                 forService:kXGAServiceName
                 key:@"GitHubToken"
                 cloudAccessGroup:nil];
-        if (error) BNCLog(@"Can't save GitHubToken: %@.", error);
+        if (error) Log(@"Can't save GitHubToken: %@.", error);
     }
 }
 
@@ -178,7 +179,7 @@ NSString*_Nonnull XGACleanString(NSString*_Nullable string) {
             return settings;
         }
     }
-    if (error) BNCLogError(@"Can't load settings: %@.", error);
+    if (error) LogError(@"Can't load settings: %@.", error);
     settings = [[XGASettings alloc] init];
     return settings;
 }
@@ -188,7 +189,7 @@ NSString*_Nonnull XGACleanString(NSString*_Nullable string) {
         [self validate];
         NSError*error = nil;
         NSData*data = [BNCEncoder dataFromObject:self ignoringIvars:nil error:&error];
-        if (error) BNCLogError(@"Error saving settings: %@.", error);
+        if (error) LogError(@"Error saving settings: %@.", error);
         if (data) [[NSUserDefaults standardUserDefaults] setObject:data forKey:@"settings"];
     }
 }

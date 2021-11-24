@@ -11,6 +11,7 @@
 #import "XGANetworkServiceBrowser.h"
 #import <XcodeGitHub/XcodeGitHub.h>
 #import <arpa/inet.h>
+#import "Logging.h"
 
 // https://superuser.com/questions/443514/how-to-get-shared-computers-ip-addresses-in-os-x-10-7?answertab=votes#tab-top
 // dns-sd -L 'MacBook Pro (2)' _xcs2p._tcp local
@@ -43,18 +44,18 @@
 
 // Sent when addresses are resolved
 - (void)netServiceDidResolveAddress:(NSNetService *)service {
-    BNCLogDebug(@"Did resolve %@ (%ld).", service.name, (long) service.addresses.count);
+    LogDebug(@"Did resolve %@ (%ld).", service.name, (long) service.addresses.count);
 }
 
 - (void)netService:(NSNetService *)netService
      didNotResolve:(NSDictionary *)errorDict {
-    BNCLogDebug(@"Can't resolve %@: %@.", netService, errorDict);
+    LogDebug(@"Can't resolve %@: %@.", netService, errorDict);
     self.error = [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorDNSLookupFailed userInfo:errorDict];
 }
 
 - (void)netServiceDidStop:(NSNetService *)service {
     @synchronized (self) {
-        BNCLogDebug(@"Netservice stop %@.", service.name);
+        LogDebug(@"Netservice stop %@.", service.name);
         __auto_type addresses = [NSMutableSet new];
         union {
             struct  sockaddr     sockaddr;
@@ -80,7 +81,7 @@
                 int err = errno;
                 char*s = strerror(err);
                 if (!s) s = "Unknown";
-                BNCLogError(@"Can't resolve address (%d): %s.", err, s);
+                LogError(@"Can't resolve address (%d): %s.", err, s);
             }
         }
         self.addresses = addresses.allObjects;
@@ -120,7 +121,7 @@
 }
 
 - (void) startDiscovery {
-    BNCLogMethodName();
+    LogDebug(@"Starting discovery");
     self.error = nil;
     self.resolvingHosts = [NSMutableArray new];
     self.resolvedHosts = [NSMutableArray new];
@@ -132,7 +133,7 @@
 }
 
 - (void) stopDiscovery {
-    BNCLogMethodName();
+    LogDebug(@"Stopping discovery");
     [self.networkBrowser stop];
     self.networkBrowser.delegate = nil;
     if ([self.delegate respondsToSelector:@selector(browser:finishedWithError:)]) {
@@ -144,7 +145,7 @@
 
 - (void)netServiceBrowser:(NSNetServiceBrowser *)browser
              didNotSearch:(NSDictionary<NSString *,NSNumber *> *)errorDict {
-    BNCLogError(@"NSNetServiceBrowser error: %@.", errorDict);
+    LogError(@"NSNetServiceBrowser error: %@.", errorDict);
     NSNumber*code = errorDict[@"NSNetServiceBrowserErrorCode"];
     if (code == nil) code = [NSNumber numberWithInteger:-1];
     self.error = [NSError errorWithDomain:NSNetServicesErrorDomain code:code.integerValue userInfo:errorDict];
@@ -155,8 +156,7 @@
 
 - (void)netServiceBrowser:(NSNetServiceBrowser *)browser
            didFindService:(NSNetService *)service
-               moreComing:(BOOL)moreComing {
-    BNCLogMethodName();
+               moreComing:(BOOL)moreComing {    
     XGANetworkServiceHost*host = [[XGANetworkServiceHost alloc] initWithService:service];
     if (!host) return;
     [self.resolvingHosts addObject:host];

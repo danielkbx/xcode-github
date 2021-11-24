@@ -11,7 +11,6 @@
 #import "XGAPreferencesViewController.h"
 #import "XGASettings.h"
 #import "XGAAddServerPanel.h"
-#import <XcodeGitHub/BNCLog.h>
 
 @interface XGAPreferencesViewController ()
 @property (strong) IBOutlet XGASettings*settings;
@@ -27,17 +26,14 @@
 
 + (instancetype) new {
     XGAPreferencesViewController*controller = [[XGAPreferencesViewController alloc] init];
-    BOOL loaded =
-        [[NSBundle mainBundle]
-            loadNibNamed:NSStringFromClass(self)
-            owner:controller
-            topLevelObjects:nil];
-    BNCLogAssert(loaded && controller);
+    BOOL loaded = [[NSBundle mainBundle] loadNibNamed:NSStringFromClass(self) owner:controller topLevelObjects:nil];
+    assert(loaded && controller);
     return controller;
 }
 
 - (void)awakeFromNib {
     [super awakeFromNib];
+    
     @synchronized (self) {
         if (self.settings) return;
         self.settings = [XGASettings shared];

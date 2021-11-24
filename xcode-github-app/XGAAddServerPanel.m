@@ -36,16 +36,17 @@ NSTimeInterval const kNetworkRefreshInterval = 7.0;
 - (instancetype) initWithServer:(XGAServer *)server {
     XGAAddServerPanel*panel = nil;
     NSArray*objects = nil;
-    [[NSBundle mainBundle]
-        loadNibNamed:NSStringFromClass(self.class)
-        owner:nil
-        topLevelObjects:&objects];
+    [[NSBundle mainBundle] loadNibNamed:NSStringFromClass(self.class) owner:nil topLevelObjects:&objects];
     for (panel in objects) {
-        if ([panel isKindOfClass:XGAAddServerPanel.class])
+        if ([panel isKindOfClass:XGAAddServerPanel.class]) {
             break;
+        }
     }
-    if (![panel isKindOfClass:XGAAddServerPanel.class])
+    
+    if (![panel isKindOfClass:XGAAddServerPanel.class]) {
         panel = [[XGAAddServerPanel alloc] init];
+    }
+    
     if (server) {
         // Copy the values, not the whole object:
         panel.server.server = server.server;

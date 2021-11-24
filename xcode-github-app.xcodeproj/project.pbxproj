@@ -31,8 +31,6 @@
 		4DF656312153620100380FD0 /* BNCEncoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DF6562F2153620100380FD0 /* BNCEncoder.m */; };
 		4DFB5308215DCD6700DB1209 /* XGANetworkServiceBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DFB5307215DCD6700DB1209 /* XGANetworkServiceBrowser.m */; };
 		6504D52E268C43A30025BE33 /* Void.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6504D52D268C43A30025BE33 /* Void.swift */; };
-		65F952AB274CF5A700816CAB /* XGALogViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 65F952A8274CF5A600816CAB /* XGALogViewController.xib */; };
-		65F952AC274CF5A700816CAB /* XGALogViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 65F952AA274CF5A700816CAB /* XGALogViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -99,9 +97,6 @@
 		6504D528268C427B0025BE33 /* xcode-github-app-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "xcode-github-app-Bridging-Header.h"; sourceTree = "<group>"; };
 		6504D52D268C43A30025BE33 /* Void.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Void.swift; sourceTree = "<group>"; };
 		65F952A7274CF35200816CAB /* Logging.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Logging.h; sourceTree = "<group>"; };
-		65F952A8274CF5A600816CAB /* XGALogViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = XGALogViewController.xib; sourceTree = "<group>"; };
-		65F952A9274CF5A600816CAB /* XGALogViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XGALogViewController.h; sourceTree = "<group>"; };
-		65F952AA274CF5A700816CAB /* XGALogViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XGALogViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -153,9 +148,6 @@
 				4DAA4665214CBEFF007A39EB /* XGAAddServerPanel.xib */,
 				4D76616B2057565200216B72 /* XGAAppDelegate.h */,
 				4D76616C2057565200216B72 /* XGAAppDelegate.m */,
-				65F952A9274CF5A600816CAB /* XGALogViewController.h */,
-				65F952AA274CF5A700816CAB /* XGALogViewController.m */,
-				65F952A8274CF5A600816CAB /* XGALogViewController.xib */,
 				4DFB5306215DCD6700DB1209 /* XGANetworkServiceBrowser.h */,
 				4DFB5307215DCD6700DB1209 /* XGANetworkServiceBrowser.m */,
 				4D8352CD20A516A200184259 /* XGAPreferencesViewController.h */,
@@ -307,7 +299,6 @@
 			files = (
 				4D7661722057565200216B72 /* Assets.xcassets in Resources */,
 				4D8352D120A516A200184259 /* XGAPreferencesViewController.xib in Resources */,
-				65F952AB274CF5A700816CAB /* XGALogViewController.xib in Resources */,
 				4D6536382150486B000812E1 /* XGAStatusPopover.xib in Resources */,
 				2BB6F4D321F9E3FF001E8693 /* Credits.rtf in Resources */,
 				4D8352C620A3F30A00184259 /* XGAStatusViewController.xib in Resources */,
@@ -325,7 +316,6 @@
 			files = (
 				4D7D249A20A617DB0086FA59 /* NSAttributedString+App.m in Sources */,
 				4DED4891209BDFCC008DE877 /* BNCGeometry.m in Sources */,
-				65F952AC274CF5A700816CAB /* XGALogViewController.m in Sources */,
 				4DFB5308215DCD6700DB1209 /* XGANetworkServiceBrowser.m in Sources */,
 				4DF0F58E208F923E0015D1F7 /* BNCThreads.m in Sources */,
 				4D8352CC20A4F93A00184259 /* XGAStatusLineView.m in Sources */,

@@ -16,6 +16,7 @@
 #import "BNCThreads.h"
 #import "NSAttributedString+App.h"
 #include <sysexits.h>
+#import "Logging.h"
 
 #pragma mark XGAStatusViewController
 
@@ -38,10 +39,7 @@
 
 + (instancetype) new {
     XGAStatusViewController*controller = [[XGAStatusViewController alloc] init];
-    [[NSBundle mainBundle]
-        loadNibNamed:NSStringFromClass(self)
-        owner:controller
-        topLevelObjects:nil];
+    [[NSBundle mainBundle] loadNibNamed:NSStringFromClass(self) owner:controller topLevelObjects:nil];
     controller.window.excludedFromWindowsMenu = YES;
     return controller;
 }
@@ -380,13 +378,13 @@
     }
 
     
-    BNCLogDebug(@"Start sync update");
+    LogDebug(@"Start sync update");
     BNCPerformBlockOnMainThreadAsync(^{ self.statusTextField.stringValue = @""; });
-    
+
     // Create new bots as needed:
-    NSArray<XGAGitHubSyncTask*>* syncTasks = XGASettings.shared.gitHubSyncTasks;
-    NSDictionary<NSString*, XGServer*>*statusServers = XGASettings.shared.servers;
-    for (XGAGitHubSyncTask*task in syncTasks) {
+    NSArray<XGAGitHubSyncTask *> *syncTasks = [XGASettings.shared.gitHubSyncTasks copy];
+    NSDictionary<NSString *, XGServer *> *statusServers = [XGASettings.shared.servers copy];
+    for (XGAGitHubSyncTask *task in syncTasks) {
         if (task.xcodeServer.length != 0 && statusServers[task.xcodeServer] != nil && !task.temporaryDisabled)
             [self updateSyncBots:task];
     }
@@ -394,8 +392,10 @@
     // Update the status:
     NSMutableArray *statusArray = [NSMutableArray new];
     for (XGAServer*server in statusServers.objectEnumerator) {
-        NSArray*a = [self updateXcodeServerStatus:server];
-        if (a) [statusArray addObjectsFromArray:a];
+        NSArray *data = [self updateXcodeServerStatus:server];
+        if (data) {
+            [statusArray addObjectsFromArray:data];
+        }
     }
     if (statusArray.count == 0) {
         XGAStatusViewItem *status = [XGAStatusViewItem new];
@@ -406,7 +406,7 @@
     BNCPerformBlockOnMainThreadAsync(^{
         self.arrayController.content = statusArray;
     });
-    BNCLogDebug(@"End sync");
+    LogDebug(@"End sync");
     
     
     // Release status lock:

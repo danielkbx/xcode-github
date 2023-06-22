@@ -392,9 +392,16 @@
     // Update the status:
     NSMutableArray *statusArray = [NSMutableArray new];
     for (XGAServer*server in statusServers.objectEnumerator) {
-        NSArray *data = [self updateXcodeServerStatus:server];
+        NSArray <XGAStatusViewItem *> *data = [self updateXcodeServerStatus:server];
         if (data) {
             [statusArray addObjectsFromArray:data];
+        }
+        
+        for (XGAStatusViewItem *item in data) {
+            if ([item.botStatus.currentStep isEqualToString:@"no integrations"]) {
+                LogDebug("Bot without integrations found")
+                [item.bot startIntegration];
+            }
         }
     }
     if (statusArray.count == 0) {

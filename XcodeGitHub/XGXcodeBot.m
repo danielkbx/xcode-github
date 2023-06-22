@@ -354,13 +354,16 @@ static NSMutableDictionary <NSString *, NSMutableDictionary<NSString *, NSArray 
 + (NSString*) botNameFromPRNumber:(NSString *)number title:(NSString *)title {
     if (!number) number = @"0";
     if (!title) title = @"<No PR Title>";
-    NSString *newTitle =
-        [[[[title
-            stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]
-            stringByReplacingOccurrencesOfString:@"\t" withString:@" "]
-            stringByReplacingOccurrencesOfString:@"\n" withString:@" "]
-            stringByReplacingOccurrencesOfString:@"\r" withString:@" "];
-    newTitle = [NSString stringWithFormat:@"xcode-github PR#%@ %@", number, newTitle];
+    NSString *cleanedTitle = [[[[[[[[title
+                                     stringByReplacingOccurrencesOfString:@"$" withString:@""]
+                                    stringByReplacingOccurrencesOfString:@"%" withString:@""]
+                                   stringByReplacingOccurrencesOfString:@"&" withString:@""]
+                                  stringByReplacingOccurrencesOfString:@"\"" withString:@""]
+                                 stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet]
+                                stringByReplacingOccurrencesOfString:@"\t" withString:@" "]
+                               stringByReplacingOccurrencesOfString:@"\n" withString:@" "]
+                              stringByReplacingOccurrencesOfString:@"\r" withString:@" "];
+    NSString *newTitle = [NSString stringWithFormat:@"%@ (PR #%@)", cleanedTitle, number];
     return newTitle;
 }
 
